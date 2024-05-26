@@ -20,24 +20,27 @@ private:
     void* m_data;
     std::size_t m_size;
     node* next = nullptr;
+    u_int8_t m_priority;
 
 public:
     template<Trivial T>
-    node(const T& value, std::size_t size = sizeof(T)){
+    node(const T& value, std::size_t size = sizeof(T), u_int8_t priority = 0){
         m_data = new T{value};
         m_type = value_t::trivial;
         m_size = size;
+        m_priority = priority;
     }
 
     template<String T>
-    node(const T& value){
+    node(const T& value, u_int8_t priority = 0){
         m_data = new T{value};
         m_type = value_t::string;
         m_size = value.size();
+        m_priority = priority;
     }
 
     template<typename T>
-    node(const T* array, std::size_t size){
+    node(const T* array, std::size_t size, u_int8_t priority = 0){
         m_type = value_t::array;
         m_size = size;
 
@@ -47,6 +50,8 @@ public:
             _next->next = new node(array[i]);
             _next = _next->next;
         }
+        
+        m_priority = priority;
     }
 
 
