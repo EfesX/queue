@@ -3,7 +3,7 @@ on:
    push:
       branches: [ "main", "develop" ]
    pull_request:
-      branches: [ "main" ]
+      branches: [ "main", "develop" ]
       
 jobs:
    build_job:
@@ -14,8 +14,11 @@ jobs:
          - name: installing
            run: sudo apt install cmake make g++
 
-         - name: configure
+         - name: configuring
            run: cmake -S . -B build
 
-         - name: build
+         - name: building
            run: cmake --build build
+
+         - name: testing
+           run: ctest -VV --test-dir build/tests
