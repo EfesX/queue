@@ -22,11 +22,17 @@ public:
     template<detail::TrivialOrString T>
     void enqueue(const T& element, u_int8_t priority = 0){
         pool.emplace_back(element, priority);
+        if(priority > 0){
+            pool.sort();
+        }
     }
 
     template<detail::Array T>
     void enqueue(T* element, std::size_t size, u_int8_t priority = 0){
         pool.emplace_back(element, size, priority);
+        if(priority > 0){
+            pool.sort();
+        }
     }
 
     template<detail::TrivialOrString T>

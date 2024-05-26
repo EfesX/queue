@@ -6,7 +6,7 @@
 
 using namespace efesx;
 
-TEST(queue_test_1, queue_test)
+TEST(queue_test, types_test)
 {
     struct test_t {
         int a;
@@ -45,5 +45,38 @@ TEST(queue_test_1, queue_test)
         ASSERT_EQ(a[0], 8);
         ASSERT_EQ(a[1], 7);
         ASSERT_EQ(a[2], 6);
-        
+}
+
+#include <iostream>
+
+TEST(queue_test, priority_test){
+    queue q;
+
+    q.enqueue(0, 0);
+    q.enqueue(1, 0);
+    q.enqueue(3, 5);
+    q.enqueue(4, 3);
+    q.enqueue(5, 125);
+    q.enqueue(6, 254);
+    q.enqueue(7, 254);
+    q.enqueue(8, 254);
+    q.enqueue(9, 255);
+    q.enqueue(10, 255);
+    q.enqueue(11, 255);
+    q.enqueue(12, 0);
+
+    int val;
+    q.dequeue(val); ASSERT_EQ(val, 9);
+    q.dequeue(val); ASSERT_EQ(val, 10);
+    q.dequeue(val); ASSERT_EQ(val, 11);
+    q.dequeue(val); ASSERT_EQ(val, 6);
+    q.dequeue(val); ASSERT_EQ(val, 7);
+    q.dequeue(val); ASSERT_EQ(val, 8);
+    q.dequeue(val); ASSERT_EQ(val, 5);
+    q.dequeue(val); ASSERT_EQ(val, 3);
+    q.dequeue(val); ASSERT_EQ(val, 4);
+    q.dequeue(val); ASSERT_EQ(val, 0);
+    q.dequeue(val); ASSERT_EQ(val, 1);
+    q.dequeue(val); ASSERT_EQ(val, 12);
+    
 }

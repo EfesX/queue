@@ -75,6 +75,8 @@ public:
             }
         }
     }
+
+    bool operator <(const node& rhs) {return m_priority > rhs.m_priority;}
 };
 
 
