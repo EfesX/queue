@@ -10,4 +10,12 @@ namespace detail {
 
     template<typename T>
     concept String = std::convertible_to<T, std::string>;
+
+    template<typename T>
+    concept TrivialOrString = Trivial<T> || String<T>;
+
+    template<typename T>
+    concept Array = requires(T* arr) {
+        arr[0];
+    };
 };
