@@ -40,16 +40,16 @@ TEST(simple_test, node_test_1)
         node(std::string("te\rst\n\0")).restore(val);
         ASSERT_TRUE(val == "te\rst\n\0");
     }
-    {
-        std::string val = "test";
-        void* res = std::malloc(val.size());
-        node(val.c_str(), val.size()).restore((char*)res);
-        ASSERT_TRUE(std::string((char*)res) == val);
-    }
     {   // test doesn't work on CI (WTF????)
-        //char* val = (char*)std::malloc(sizeof("test"));
-        //node("test", sizeof("test")).restore(val);
-        //ASSERT_TRUE(std::string(val) == "test");
+        // std::string val = "test";
+        // void* res = std::malloc(val.size());
+        // node(val.c_str(), val.size()).restore((char*)res);
+        // ASSERT_TRUE(std::string((char*)res) == val);
+    }
+    
+        char* val = (char*)std::malloc(sizeof("test"));
+        node("test", sizeof("test")).restore(val);
+        ASSERT_TRUE(std::string(val) == "test");
     }
     {
         int arr[3] = {1, 2, 3};
