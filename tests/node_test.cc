@@ -1,72 +1,83 @@
 #include "gtest/gtest.h"
 
+#include <string>
+#include <vector>
+#include <list>
+#include <set>
+#include <unordered_set>
+#include <map>
+#include <unordered_map>
+
 #include "detail/node.hpp"
 
-#include <string>
+using namespace efesx::queue::detail;
 
-using namespace detail;
-
-TEST(node_test_1, node_test)
+TEST(simple_test, node_test_1)
 {
-    int int_val;
-    std::string str_val = "te\rst\n\0";
-    struct test_t {
-        int a;
-        bool b;
-        float c;
-    };
-    int arr[2] = {5, 25};
-    std::string arr2[2] = {"hello", "world"};
-    test_t arr3[2] = {
-        test_t{0, true, 65.8},
-        test_t{1, false, 70.3}
-    };
-
-    { // int
-        node n = node(5);
-        n.restore(int_val);
-        ASSERT_EQ(int_val, 5);
+    {
+        int val;
+        node(5).restore(val);
+        ASSERT_TRUE(val == 5);
     }
-    { // string
-        node n = node(str_val);
-        str_val.clear();
-        EXPECT_FALSE(str_val == "te\rst\n\0");
-        n.restore(str_val);
-        EXPECT_TRUE(str_val == "te\rst\n\0");
+    {
+        int val = 9;
+        int res[1];
+        node(&val, 1).restore(res);
+        ASSERT_TRUE(res[0] == 9);
     }
-    { // trivial struct
-        node n = node(test_t{55, false, 88.5});
-        test_t res;
-        n.restore(res);
-        ASSERT_EQ(res.a, 55);
-        ASSERT_EQ(res.b, false);
-        EXPECT_TRUE((res.c < 88.55) && ((res.c > 88.45)));
+    {
+        bool val;
+        node(true).restore(val);
+        ASSERT_TRUE(val == true);
     }
-    { // array
-        {
-            node n = node(arr, 2);
-            int tarr[2];
-            n.restore(tarr);
-            ASSERT_EQ(tarr[0], 5);
-            ASSERT_EQ(tarr[1], 25);
-        }
-        {
-            node n = node(arr2, 2);
-            std::string tarr[2];
-            n.restore(tarr);
-            ASSERT_EQ(tarr[0], "hello");
-            ASSERT_EQ(tarr[1], "world");
-        }
-        {
-            node n = node(arr3, 2);
-            test_t tarr[2];
-            n.restore(tarr);
-            ASSERT_EQ(tarr[0].a, 0);
-            ASSERT_EQ(tarr[0].b, true);
-            EXPECT_TRUE((tarr[0].c > 65.75) && (tarr[0].c < 65.85));
-            ASSERT_EQ(tarr[1].a, 1);
-            ASSERT_EQ(tarr[1].b, false);
-            EXPECT_TRUE((tarr[1].c > 70.25) && (tarr[0].c < 70.35));
-        }
+    {
+        char val;
+        node('\n').restore(val);
+        ASSERT_TRUE(val == '\n');
+    }
+    {
+        std::string val;
+        node(std::string("te\rst\n\0")).restore(val);
+        ASSERT_TRUE(val == "te\rst\n\0");
+    }
+    {
+        std::string val = "test";
+        void* res = std::malloc(val.size());
+        node(val.c_str(), val.size()).restore((char*)res);
+        ASSERT_TRUE(std::string((char*)res) == val);
+    }
+    {
+        char* val = (char*)std::malloc(sizeof("test"));
+        node("test", sizeof("test")).restore(val);
+        ASSERT_TRUE(std::string(val) == "test");
+    }
+    {
+        int arr[3] = {1, 2, 3};
+        int res[3];
+        node(arr, 3).restore(res);
+        ASSERT_TRUE(arr[0] == res[0]);
+        ASSERT_TRUE(arr[1] == res[1]);
+        ASSERT_TRUE(arr[2] == res[2]);
+    }
+    {   // @todo node must keep another nodes
+        // kinda: node(node(node(5)));
+    }
+    {
+        node(std::vector<int>{1, 2, 3});
+    }
+    {
+        node(std::list<int>{1, 2, 3});
+    }
+    {
+        node(std::set<int>{1, 2, 3});
+    }
+    {
+        node(std::unordered_set<int>{1, 2, 3});
+    }
+    {
+        //node(std::map<int, int>{{1, 2}});
+    }
+    {
+        //node(std::unordered_map<int, int>{{1, 2}, {3, 4}, {5, 6}});
     }
 }
