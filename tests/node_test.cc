@@ -46,6 +46,7 @@ TEST(simple_test, node_test_1)
         // node(val.c_str(), val.size()).restore((char*)res);
         // ASSERT_TRUE(std::string((char*)res) == val);
     }
+    {
     
         char* val = (char*)std::malloc(sizeof("test"));
         node("test", sizeof("test")).restore(val);
