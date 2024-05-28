@@ -2,55 +2,97 @@
 
 #include "detail/meta.hpp"
 
-#include <string>
-#include <vector>
-#include <list>
-#include <set>
-#include <unordered_set>
-#include <map>
-#include <unordered_map>
-
 using namespace efesx::queue::detail;
 
-template<typename T>
-bool test(T) requires (Container<T>) {
-    return true;
-}
-template<typename T>
-bool test(T) requires (!Container<T>) {
-    return false;
-}
-
-TEST(meta_test, detector_test)
+TEST(meta_test, is_integral_concept_test)
 {
-    ASSERT_TRUE(detector<int>::type == value_t::int_t);
-    ASSERT_TRUE(detector<bool>::type == value_t::bool_t);
-    ASSERT_TRUE(detector<std::string>::type == value_t::string_t);
-    ASSERT_TRUE(detector<char>::type == value_t::char_t);
+    EXPECT_TRUE(IsIntegral<char>);
+    EXPECT_TRUE(IsIntegral<int8_t>);
+    EXPECT_TRUE(IsIntegral<int16_t>);
+    EXPECT_TRUE(IsIntegral<int32_t>);
+    EXPECT_TRUE(IsIntegral<int64_t>);
+    EXPECT_TRUE(IsIntegral<int>);
+    EXPECT_TRUE(IsIntegral<uint8_t>);
+    EXPECT_TRUE(IsIntegral<uint16_t>);
+    EXPECT_TRUE(IsIntegral<uint32_t>);
+    EXPECT_TRUE(IsIntegral<uint64_t>);
+    EXPECT_TRUE(IsIntegral<unsigned>);
+    EXPECT_TRUE(IsIntegral<unsigned long>);
+    
+    EXPECT_FALSE(IsIntegral<int&>);
+    EXPECT_FALSE(IsIntegral<int&&>);
+    EXPECT_FALSE(IsIntegral<int*>);
+    EXPECT_FALSE(IsIntegral<int**>);
 
-    ASSERT_TRUE(detector<int*>::type == value_t::null_t);
-    ASSERT_TRUE(detector<bool*>::type == value_t::null_t);
-    ASSERT_TRUE(detector<std::string*>::type == value_t::null_t);
-    ASSERT_TRUE(detector<char*>::type == value_t::null_t);
+    EXPECT_FALSE(IsIntegral<double>);
+    EXPECT_FALSE(IsIntegral<float>);
 
-    ASSERT_TRUE(detector<int&>::type == value_t::null_t);
-    ASSERT_TRUE(detector<bool&>::type == value_t::null_t);
-    ASSERT_TRUE(detector<std::string&>::type == value_t::null_t);
-    ASSERT_TRUE(detector<char&>::type == value_t::null_t);
+    EXPECT_FALSE(IsIntegral<double&>);
+    EXPECT_FALSE(IsIntegral<float*>);
+
+    EXPECT_FALSE(IsIntegral<std::string>);
+    EXPECT_FALSE(IsIntegral<std::string&>);
+    EXPECT_FALSE(IsIntegral<std::string*>);
 }
 
-TEST(meta_test, container_test)
+TEST(meta_test, is_floating_concept_test)
 {
-    ASSERT_TRUE(test(std::vector<int>{}));
-    ASSERT_TRUE(test(std::vector<std::vector<int>>{}));
-    ASSERT_TRUE(test(std::list<int>{}));
-    ASSERT_TRUE(test(std::set<int>{}));
-    ASSERT_TRUE(test(std::unordered_set<int>{}));
-    ASSERT_TRUE(test(std::map<int, int>{}));
-    ASSERT_TRUE(test(std::unordered_map<int, int>{}));
+    EXPECT_FALSE(IsFloating<char>);
+    EXPECT_FALSE(IsFloating<int8_t>);
+    EXPECT_FALSE(IsFloating<int16_t>);
+    EXPECT_FALSE(IsFloating<int32_t>);
+    EXPECT_FALSE(IsFloating<int64_t>);
+    EXPECT_FALSE(IsFloating<int>);
+    EXPECT_FALSE(IsFloating<uint8_t>);
+    EXPECT_FALSE(IsFloating<uint16_t>);
+    EXPECT_FALSE(IsFloating<uint32_t>);
+    EXPECT_FALSE(IsFloating<uint64_t>);
+    EXPECT_FALSE(IsFloating<unsigned>);
+    EXPECT_FALSE(IsFloating<unsigned long>);
+    
+    EXPECT_FALSE(IsFloating<int&>);
+    EXPECT_FALSE(IsFloating<int&&>);
+    EXPECT_FALSE(IsFloating<int*>);
+    EXPECT_FALSE(IsFloating<int**>);
 
-    ASSERT_FALSE(test(int{}));
-    ASSERT_FALSE(test(char{}));
-    ASSERT_FALSE(test(bool{}));
-    ASSERT_FALSE(test(std::string{}));
+    EXPECT_TRUE(IsFloating<double>);
+    EXPECT_TRUE(IsFloating<float>);
+
+    EXPECT_FALSE(IsFloating<double&>);
+    EXPECT_FALSE(IsFloating<float*>);
+
+    EXPECT_FALSE(IsFloating<std::string>);
+    EXPECT_FALSE(IsFloating<std::string&>);
+    EXPECT_FALSE(IsFloating<std::string*>);
+}
+
+TEST(meta_test, is_string_concept_test)
+{
+    EXPECT_FALSE(IsString<char>);
+    EXPECT_FALSE(IsString<int8_t>);
+    EXPECT_FALSE(IsString<int16_t>);
+    EXPECT_FALSE(IsString<int32_t>);
+    EXPECT_FALSE(IsString<int64_t>);
+    EXPECT_FALSE(IsString<int>);
+    EXPECT_FALSE(IsString<uint8_t>);
+    EXPECT_FALSE(IsString<uint16_t>);
+    EXPECT_FALSE(IsString<uint32_t>);
+    EXPECT_FALSE(IsString<uint64_t>);
+    EXPECT_FALSE(IsString<unsigned>);
+    EXPECT_FALSE(IsString<unsigned long>);
+    
+    EXPECT_FALSE(IsString<int&>);
+    EXPECT_FALSE(IsString<int&&>);
+    EXPECT_FALSE(IsString<int*>);
+    EXPECT_FALSE(IsString<int**>);
+
+    EXPECT_FALSE(IsString<double>);
+    EXPECT_FALSE(IsString<float>);
+
+    EXPECT_FALSE(IsString<double&>);
+    EXPECT_FALSE(IsString<float*>);
+
+    EXPECT_TRUE(IsString<std::string>);
+    EXPECT_TRUE(IsString<std::string&>);
+    EXPECT_FALSE(IsString<std::string*>);
 }

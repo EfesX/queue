@@ -1,12 +1,6 @@
 #include "gtest/gtest.h"
 
 #include <string>
-#include <vector>
-#include <list>
-#include <set>
-#include <unordered_set>
-#include <map>
-#include <unordered_map>
 
 #include "detail/node.hpp"
 
@@ -15,70 +9,87 @@ using namespace efesx::queue::detail;
 TEST(simple_test, node_test_1)
 {
     {
-        int val;
-        node(5).restore(val);
-        ASSERT_TRUE(val == 5);
+        node n;
+        ASSERT_TRUE(n.size() == 0);
+        ASSERT_TRUE(n.has_value() == false);
+        ASSERT_TRUE(n.value_type() == value_t::null);
     }
     {
-        int val = 9;
-        int res[1];
-        node(&val, 1).restore(res);
-        ASSERT_TRUE(res[0] == 9);
+        node n(54);
+        ASSERT_TRUE(n.size() == 4);
+        ASSERT_TRUE(n.has_value() == true);
+        ASSERT_TRUE(n.value_type() == value_t::integer);
+        ASSERT_TRUE(n.value_cast<int>() == 54);
     }
     {
-        bool val;
-        node(true).restore(val);
-        ASSERT_TRUE(val == true);
+        node n(0x01234567);
+        ASSERT_TRUE(n.size() == 4);
+        ASSERT_TRUE(n.has_value() == true);
+        ASSERT_TRUE(n.value_type() == value_t::integer);
+        ASSERT_TRUE(n.value_cast<uint8_t>() == 0x67);
     }
     {
-        char val;
-        node('\n').restore(val);
-        ASSERT_TRUE(val == '\n');
+        node n(double{6.55});
+        ASSERT_TRUE(n.size() == 8);
+        ASSERT_TRUE(n.has_value() == true);
+        ASSERT_TRUE(n.value_type() == value_t::floating);
+        ASSERT_TRUE((n.value_cast<double>() > 6.50) && (n.value_cast<double>() < 6.60));
     }
     {
-        std::string val;
-        node(std::string("te\rst\n\0")).restore(val);
-        ASSERT_TRUE(val == "te\rst\n\0");
-    }
-    {   // test doesn't work on CI (WTF????)
-        // std::string val = "test";
-        // void* res = std::malloc(val.size());
-        // node(val.c_str(), val.size()).restore((char*)res);
-        // ASSERT_TRUE(std::string((char*)res) == val);
+        node n(float{6.55});
+        ASSERT_TRUE(n.size() == 4);
+        ASSERT_TRUE(n.has_value() == true);
+        ASSERT_TRUE(n.value_type() == value_t::floating);
+        ASSERT_TRUE((n.value_cast<float>() > 6.50) && (n.value_cast<float>() < 6.60));
     }
     {
-    
-        char* val = (char*)std::malloc(sizeof("test"));
-        node("test", sizeof("test")).restore(val);
-        ASSERT_TRUE(std::string(val) == "test");
+        node n(std::string{"test"});
+        EXPECT_EQ(n.size(), 4);
+        ASSERT_TRUE(n.has_value() == true);
+        ASSERT_TRUE(n.value_type() == value_t::text);
+        ASSERT_TRUE(n.value_cast<std::string>() == "test");
     }
     {
-        int arr[3] = {1, 2, 3};
-        int res[3];
-        node(arr, 3).restore(res);
-        ASSERT_TRUE(arr[0] == res[0]);
-        ASSERT_TRUE(arr[1] == res[1]);
-        ASSERT_TRUE(arr[2] == res[2]);
-    }
-    {   // @todo node must keep another nodes
-        // kinda: node(node(node(5)));
+        node n("test", sizeof("test"));
+        EXPECT_EQ(n.size(), 5);
+        ASSERT_TRUE(n.has_value() == true);
+        ASSERT_TRUE(n.value_type() == value_t::text);
+        EXPECT_EQ(std::string("test", sizeof("test")), n.value_cast<std::string>());
     }
     {
-        node(std::vector<int>{1, 2, 3});
+        try {
+            node n(666);
+            EXPECT_EQ(4, n.size());
+            EXPECT_EQ(true, n.has_value());
+            EXPECT_EQ(value_t::integer, n.value_type());
+            std::string val = n.value_cast<std::string>();
+        } catch (std::runtime_error& e){
+            EXPECT_STREQ("Bad Node Value Cast", e.what());
+        }
     }
     {
-        node(std::list<int>{1, 2, 3});
+        try {
+            node n;
+            EXPECT_EQ(n.size(), 0);
+            EXPECT_EQ(false, n.has_value());
+            EXPECT_EQ(value_t::null, n.value_type());
+            int val = n.value_cast<int>();
+        } catch (std::runtime_error& e){
+            EXPECT_STREQ("Node Value Is Empty", e.what());
+        }
     }
     {
-        node(std::set<int>{1, 2, 3});
+        int arr[3] = {0, 1, 2};
+        node n(arr, 12);
+        EXPECT_EQ(12, n.size());
+        EXPECT_EQ(true, n.has_value());
+        EXPECT_EQ(value_t::blob, n.value_type());
+        int* res = (int*)std::malloc(sizeof(int) * n.size());
+        n.blob_copy(res);
+        EXPECT_EQ(arr[0], res[0]);
+        EXPECT_EQ(arr[1], res[1]);
+        EXPECT_EQ(arr[2], res[2]);
+        std::free(res);
     }
-    {
-        node(std::unordered_set<int>{1, 2, 3});
-    }
-    {
-        //node(std::map<int, int>{{1, 2}});
-    }
-    {
-        //node(std::unordered_map<int, int>{{1, 2}, {3, 4}, {5, 6}});
-    }
+
 }
