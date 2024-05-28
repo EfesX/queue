@@ -62,7 +62,7 @@ TEST(simple_test, node_test_1)
             EXPECT_EQ(4, n.size());
             EXPECT_EQ(true, n.has_value());
             EXPECT_EQ(value_t::integer, n.value_type());
-            std::string val = n.value_cast<std::string>();
+            n.value_cast<std::string>();
         } catch (std::runtime_error& e){
             EXPECT_STREQ("Bad Node Value Cast", e.what());
         }
@@ -73,7 +73,7 @@ TEST(simple_test, node_test_1)
             EXPECT_EQ(n.size(), 0);
             EXPECT_EQ(false, n.has_value());
             EXPECT_EQ(value_t::null, n.value_type());
-            int val = n.value_cast<int>();
+            n.value_cast<int>();
         } catch (std::runtime_error& e){
             EXPECT_STREQ("Node Value Is Empty", e.what());
         }
@@ -84,7 +84,7 @@ TEST(simple_test, node_test_1)
         EXPECT_EQ(12, n.size());
         EXPECT_EQ(true, n.has_value());
         EXPECT_EQ(value_t::blob, n.value_type());
-        int* res = (int*)std::malloc(sizeof(int) * n.size());
+        int* res = static_cast<int*>(std::malloc(sizeof(int) * n.size()));
         n.blob_copy(res);
         EXPECT_EQ(arr[0], res[0]);
         EXPECT_EQ(arr[1], res[1]);

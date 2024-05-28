@@ -19,7 +19,6 @@ private:
     using store_t = std::list<node>;
 
     store_t store;
-    std::list<store_t::iterator> extracted;
 
     struct accesser {
         store_t& m_store;
