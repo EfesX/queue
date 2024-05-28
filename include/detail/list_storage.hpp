@@ -2,8 +2,11 @@
 
 #include <list>
 #include <optional>
+#include <memory>
+#include <functional>
 
 #include "detail/node.hpp"
+#include "detail/meta.hpp"
 
 namespace efesx {
 namespace queue {
@@ -13,7 +16,43 @@ namespace detail
 
 class list_storage {
 private:
-    std::list<node> store;
+    using store_t = std::list<node>;
+
+    store_t store;
+    std::list<store_t::iterator> extracted;
+
+    struct deleter {
+        store_t& m_store;
+        store_t::iterator& m_it;
+
+        deleter(store_t& _store, store_t::iterator& _it) : 
+            m_store(_store), 
+            m_it(_it)
+        {}
+        ~deleter(){
+            m_store.erase(m_it);
+        }
+    };
+
+    template<typename T>
+    std::pair<T, bool> _get_value(value_t t, void* buf = nullptr){
+        for (auto it = store.begin(); it != store.end(); it++){
+            if (it->value_type() == t) {
+                if (it->has_value() && (it->size() != 0)){
+                    std::unique_ptr<deleter> obj = std::make_unique<deleter>(store, it);
+
+                    if(buf != nullptr){
+                        it->blob_copy(buf);
+                        return std::make_pair(T{}, true);
+                    }
+
+                    return std::make_pair(it->value_cast<T>(), true);
+                }
+            }
+        }
+        return std::make_pair(T{}, false);
+    }
+
 public:
     list_storage() = default;
     list_storage(const list_storage&) = delete;
@@ -27,11 +66,13 @@ public:
         store.sort();
     }
 
+    bool empty(){
+        return (store.size() == 0);
+    }
+
     template<typename T = bool>
     std::optional<T> extract(void* buf = nullptr){
-        if(store.size() == 0) {
-            return std::optional<T>{};
-        }
+        if(empty()) return std::optional<T>{};
 
         node& val = store.front();
 
@@ -57,12 +98,35 @@ public:
     }
 
     template<typename T>
-    std::optional<T> extract_with_type(void* buf = nullptr){
-        throw std::runtime_error("Not Yet Implemented Error");
+    std::pair<T, bool> extract_with_type(){
+        if(empty()) return std::make_pair(T{}, false);
+
+        if constexpr (IsIntegral<T>)
+        {
+            return _get_value<T>(value_t::integer);    
+        } 
+        else if constexpr (IsFloating<T>)
+        {
+            return _get_value<T>(value_t::floating); 
+        }
+        else if constexpr (IsString<T>)
+        {
+            return _get_value<T>(value_t::text);    
+        }
+        else
+        {
+            throw std::runtime_error("Not Implemented Error");
+        }
+        return std::make_pair(T{}, false);
     }
 
-
-
+    std::pair<void*, bool> extract_with_type(void* buf = nullptr){
+        if (buf == nullptr)
+        {
+            return std::make_pair(nullptr, false);
+        }
+        return _get_value<void*>(value_t::blob, buf);
+    }
 };
 
 

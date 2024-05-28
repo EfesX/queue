@@ -1,5 +1,4 @@
 find_package(GTest CONFIG)
-
 if(NOT ${GTest_FOUND})
   include(FetchContent)
   FetchContent_Declare(
@@ -8,15 +7,10 @@ if(NOT ${GTest_FOUND})
     GIT_TAG        v1.14.0
   )
   FetchContent_MakeAvailable(googletest)
-  
   include(GoogleTest)
-
   set(GTEST_LINK gtest gtest_main)
-
 else()
-
   set(GTEST_LINK GTest::gtest GTest::gtest_main)
-
 endif()
 
 

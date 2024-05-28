@@ -6,6 +6,7 @@ using namespace efesx::queue::detail;
 
 TEST(meta_test, is_integral_concept_test)
 {
+    EXPECT_TRUE(IsIntegral<bool>);
     EXPECT_TRUE(IsIntegral<char>);
     EXPECT_TRUE(IsIntegral<int8_t>);
     EXPECT_TRUE(IsIntegral<int16_t>);
@@ -37,6 +38,7 @@ TEST(meta_test, is_integral_concept_test)
 
 TEST(meta_test, is_floating_concept_test)
 {
+    EXPECT_FALSE(IsFloating<bool>);
     EXPECT_FALSE(IsFloating<char>);
     EXPECT_FALSE(IsFloating<int8_t>);
     EXPECT_FALSE(IsFloating<int16_t>);
@@ -68,6 +70,7 @@ TEST(meta_test, is_floating_concept_test)
 
 TEST(meta_test, is_string_concept_test)
 {
+    EXPECT_FALSE(IsString<bool>);
     EXPECT_FALSE(IsString<char>);
     EXPECT_FALSE(IsString<int8_t>);
     EXPECT_FALSE(IsString<int16_t>);
