@@ -21,16 +21,25 @@ private:
     store_t store;
     std::list<store_t::iterator> extracted;
 
-    struct deleter {
+    struct accesser {
         store_t& m_store;
         store_t::iterator& m_it;
 
-        deleter(store_t& _store, store_t::iterator& _it) : 
+        accesser(store_t& _store, store_t::iterator& _it) : 
             m_store(_store), 
             m_it(_it)
         {}
-        ~deleter(){
+        ~accesser(){
             m_store.erase(m_it);
+        }
+
+        template<typename T>
+        std::pair<T, bool> access(void* buf = nullptr){
+            if(buf != nullptr){
+                m_it->blob_copy(buf);
+                return std::make_pair(T{}, true);
+            }
+            return std::make_pair(m_it->value_cast<T>(), true);
         }
     };
 
@@ -39,14 +48,9 @@ private:
         for (auto it = store.begin(); it != store.end(); it++){
             if (it->value_type() == t) {
                 if (it->has_value() && (it->size() != 0)){
-                    std::unique_ptr<deleter> obj = std::make_unique<deleter>(store, it);
-
-                    if(buf != nullptr){
-                        it->blob_copy(buf);
-                        return std::make_pair(T{}, true);
-                    }
-
-                    return std::make_pair(it->value_cast<T>(), true);
+                    // to automaticaly erase node from store (in destructor of accesser)
+                    std::unique_ptr<accesser> obj = std::make_unique<accesser>(store, it);
+                    return obj->access<T>(buf);
                 }
             }
         }
