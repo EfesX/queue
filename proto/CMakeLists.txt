@@ -37,7 +37,7 @@ set(hw_proto_hdrs "${CMAKE_CURRENT_BINARY_DIR}/queue.pb.h")
 
 add_custom_command(
     OUTPUT ${hw_proto_srcs} ${hw_proto_hdrs}
-    COMMAND /home/efesxzc/hdd/512gb/projects/equeue/build/_deps/protobuf-build/protoc
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/_deps/protobuf-build/protoc
     ARGS --cpp_out ${CMAKE_CURRENT_BINARY_DIR}
         -I ${hw_proto_path}
         --plugin=protoc-gen-grpc=${GRPC_PLUGIN}
