@@ -15,24 +15,19 @@ endif()
 
 
 add_executable(node_test node_test.cc)
-target_include_directories(node_test PUBLIC ../include)
-target_link_libraries(node_test ${GTEST_LINK})
+target_link_libraries(node_test ${PROJECT_NAME} ${GTEST_LINK})
 
 add_executable(queue_test queue_test.cc)
-target_include_directories(queue_test PUBLIC ../include)
-target_link_libraries(queue_test ${GTEST_LINK})
+target_link_libraries(queue_test ${PROJECT_NAME} ${GTEST_LINK})
 
 add_executable(meta_test meta_test.cc)
-target_include_directories(meta_test PUBLIC ../include)
-target_link_libraries(meta_test ${GTEST_LINK})
+target_link_libraries(meta_test ${PROJECT_NAME} ${GTEST_LINK})
 
 add_executable(list_storage_test list_storage_test.cc)
-target_include_directories(list_storage_test PUBLIC ../include)
-target_link_libraries(list_storage_test ${GTEST_LINK})
+target_link_libraries(list_storage_test ${PROJECT_NAME} ${GTEST_LINK})
 
 add_executable(proto_storage_test proto_storage_test.cc)
-target_include_directories(proto_storage_test PUBLIC ../include)
-target_link_libraries(proto_storage_test ${GTEST_LINK} hw_proto)
+target_link_libraries(proto_storage_test ${PROJECT_NAME} ${GTEST_LINK} hw_proto)
 
 enable_testing()
 add_test(meta_test meta_test)

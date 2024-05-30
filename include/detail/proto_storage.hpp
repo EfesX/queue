@@ -16,10 +16,6 @@ using namespace efesx::queue::detail::proto;
 using node_t   = QueueStorageNode;
 using node_p_t = std::shared_ptr<QueueStorageNode>;
 
-bool operator<(const node_p_t lhs, const node_p_t rhs){
-    return (lhs->priority() < rhs->priority());
-}
-
 bool operator==(const node_p_t lhs, const node_p_t rhs){
     if (lhs->priority() != rhs->priority()) return false;
     if (lhs->created_at() != rhs->created_at()) return false;
@@ -27,8 +23,7 @@ bool operator==(const node_p_t lhs, const node_p_t rhs){
     if (lhs->has_double_value()){
         if(!rhs->has_double_value()) return false;
         if(lhs->double_value() != rhs->double_value()) return false;
-    } 
-    else if (lhs->has_float_value()){
+    } else if (lhs->has_float_value()){
         if(!rhs->has_float_value()) return false;
         if(lhs->float_value() != rhs->float_value()) return false;
     } else if (lhs->has_sint32_value()){
@@ -52,6 +47,8 @@ bool operator==(const node_p_t lhs, const node_p_t rhs){
     } else if (lhs->has_raw_data()){
         if(!rhs->has_raw_data()) return false;
         if(lhs->raw_data() != rhs->raw_data()) return false;
+    } else {
+        std::runtime_error("Not Implemented Error");
     }
 
     return true;
@@ -60,17 +57,46 @@ bool operator==(const node_p_t lhs, const node_p_t rhs){
 class proto_storage
 {
 private:
-    std::list<node_p_t> store;
+    struct wrapper_node {
+        node_p_t node;
+
+        wrapper_node() : node(std::make_shared<node_t>()) {}
+        explicit wrapper_node(const node_t& _node) : node(std::make_shared<node_t>(_node)) {}
+
+        wrapper_node(const wrapper_node&) = delete;
+        wrapper_node(wrapper_node&&) = delete;
+        wrapper_node& operator=(wrapper_node&&) = delete;
+        ~wrapper_node() = default;
+
+        inline bool operator==(const wrapper_node& oth) const {
+            return (node == oth.node);
+        }
+
+        inline bool operator<(const wrapper_node& oth){
+            return (node->priority() < oth.node->priority());
+        }
+    };
+
+    std::list<wrapper_node> store;
 
 public:
     proto_storage() = default;
     ~proto_storage() = default;
 
+    inline node_p_t& extract(){
+        return std::forward<node_p_t&>(store.back().node);
+    }
+
+    inline void pop(){
+        if(!store.empty())
+            store.pop_back();
+    }
+
     void insert(u_int32_t priority, const void* raw, std::size_t size){
         using google::protobuf::util::TimeUtil;
 
-        store.emplace_front(std::make_shared<node_t>());
-        auto _node = store.front();
+        store.emplace_front();
+        auto _node = store.front().node;
 
         _node->set_raw_data(raw, size);
 
@@ -83,8 +109,8 @@ public:
     void insert(u_int32_t priority, const T& value){
         using google::protobuf::util::TimeUtil;
 
-        store.emplace_front(std::make_shared<node_t>());
-        auto _node = store.front();
+        store.emplace_front();
+        auto _node = store.front().node;
 
         _node->set_priority(priority);
 
@@ -96,10 +122,15 @@ public:
         {
             _node->set_bool_value(value);
         }
+        else if constexpr (IsFloating<T>)
+        {
+            if constexpr (Size == 8) _node->set_float_value(value);
+            else _node->set_double_value(value);
+        } 
         else if constexpr (IsSigned<T>)
         {
             if constexpr (Size == 8) _node->set_sint64_value(value);
-            else _node->set_sint64_value(value);
+            else _node->set_sint32_value(value);
         } 
         else if constexpr (IsUnsigned<T>)
         {
@@ -124,7 +155,7 @@ public:
         for (auto it = store.rbegin(); it != store.rend(); it++){
             node_t* _node = pb_store.add_node();
             // is it really nead to copy? may be to swap and to erase?
-            _node->CopyFrom(*it->get());
+            _node->CopyFrom(*it->node.get());
         }
 
         std::fstream out(file, std::ios::out | std::ios::trunc | std::ios::binary);
@@ -153,11 +184,19 @@ public:
         in.close();
 
         for (int i = 0; i < pb_store.node_size(); i++) {
-            store.emplace_front(std::make_shared<node_t>(pb_store.node(i)));
+            store.emplace_front(pb_store.node(i));
         }
 
         google::protobuf::ShutdownProtobufLibrary();
         return true;
+    }
+
+    inline std::size_t amount(){
+        return store.size();
+    }
+
+    inline bool empty(){
+        return store.empty();
     }
 
     bool operator==(const proto_storage& oth) const {
