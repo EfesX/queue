@@ -1,7 +1,7 @@
 #pragma once
 
 #include "proto/queue.pb.h"
-#include <google/protobuf/util/time_util.h>
+//#include <google/protobuf/util/time_util.h>
 
 #include <list>
 #include <memory>
@@ -18,7 +18,7 @@ using node_p_t = std::shared_ptr<QueueStorageNode>;
 
 bool operator==(const node_p_t lhs, const node_p_t rhs){
     if (lhs->priority() != rhs->priority()) return false;
-    if (lhs->created_at() != rhs->created_at()) return false;
+    //if (lhs->created_at() != rhs->created_at()) return false;
     
     if (lhs->has_double_value()){
         if(!rhs->has_double_value()) return false;
@@ -93,21 +93,21 @@ public:
     }
 
     void insert(u_int32_t priority, const void* raw, std::size_t size){
-        using google::protobuf::util::TimeUtil;
+        //using google::protobuf::util::TimeUtil;
 
         store.emplace_front();
         auto _node = store.front().node;
 
         _node->set_raw_data(raw, size);
 
-        *_node->mutable_created_at() = TimeUtil::SecondsToTimestamp(time(NULL));
+        //*_node->mutable_created_at() = TimeUtil::SecondsToTimestamp(time(NULL));
 
         if(priority != 0) store.sort();
     }
 
     template<typename T, std::size_t Size = sizeof(T)>
     void insert(u_int32_t priority, const T& value){
-        using google::protobuf::util::TimeUtil;
+        //using google::protobuf::util::TimeUtil;
 
         store.emplace_front();
         auto _node = store.front().node;
@@ -142,7 +142,7 @@ public:
             static_assert(false, "Not Implemented Error");
         }
 
-        *_node->mutable_created_at() = TimeUtil::SecondsToTimestamp(time(NULL));
+        //*_node->mutable_created_at() = TimeUtil::SecondsToTimestamp(time(NULL));
 
         if(priority != 0) store.sort();
     }
