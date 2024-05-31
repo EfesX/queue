@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.27)
 project(equeue)
 
 option(BUILD_TESTS "Build the unit tests" ON)
@@ -12,9 +12,7 @@ target_sources(${PROJECT_NAME} INTERFACE
     FILE_SET HEADERS
     BASE_DIRS "${PROJECT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}"
     FILES
-        detail/list_storage.hpp
         detail/meta.hpp
-        detail/node.hpp
         detail/proto_storage.hpp
         detail/types.hpp
         detail/utils.hpp

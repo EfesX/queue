@@ -13,8 +13,11 @@ namespace efesx::queue::detail {
 
 using namespace efesx::queue::detail::proto;
 
-using node_t   = QueueStorageNode;
-using node_p_t = std::shared_ptr<QueueStorageNode>;
+using node_t           = QueueStorageNode;
+using node_p_t         = std::shared_ptr<QueueStorageNode>;
+
+template<typename T>
+using node_container_t = std::list<T>;
 
 bool operator==(const node_p_t lhs, const node_p_t rhs){
     if (lhs->priority() != rhs->priority()) return false;
@@ -77,14 +80,17 @@ private:
         }
     };
 
-    std::list<wrapper_node> store;
+    node_container_t<wrapper_node> store;
 
 public:
+    using node_t   = node_t;
+    using node_p_t = node_p_t;
+
     proto_storage() = default;
     ~proto_storage() = default;
 
     inline node_p_t& extract(){
-        return std::forward<node_p_t&>(store.back().node);
+        return store.back().node;
     }
 
     inline void pop(){
@@ -92,7 +98,7 @@ public:
             store.pop_back();
     }
 
-    void insert(u_int32_t priority, const void* raw, std::size_t size){
+    void insert(uint32_t priority, const void* raw, std::size_t size){
         //using google::protobuf::util::TimeUtil;
 
         store.emplace_front();
@@ -105,8 +111,9 @@ public:
         if(priority != 0) store.sort();
     }
 
+
     template<typename T, std::size_t Size = sizeof(T)>
-    void insert(u_int32_t priority, const T& value){
+    void insert(uint32_t priority, const T& value){
         //using google::protobuf::util::TimeUtil;
 
         store.emplace_front();
@@ -139,7 +146,8 @@ public:
         } 
         else 
         {
-            static_assert(false, "Not Implemented Error");
+            //static_assert(false, "Not Implemented Error");
+            throw std::runtime_error("Not Implemented Error");
         }
 
         //*_node->mutable_created_at() = TimeUtil::SecondsToTimestamp(time(NULL));
