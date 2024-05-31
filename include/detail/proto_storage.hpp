@@ -23,23 +23,32 @@ bool operator==(const node_p_t& lhs, const node_p_t& rhs){
     if (lhs->priority() != rhs->priority()) return false;
     //if (lhs->created_at() != rhs->created_at()) return false;
     
-    if (lhs->has_double_value() && !rhs->has_double_value()){
+    if (lhs->has_double_value()){
+        if(!rhs->has_double_value()) return false;
         if(lhs->double_value() != rhs->double_value()) return false;
-    } else if (lhs->has_float_value() && !rhs->has_float_value()){
+    } else if (lhs->has_float_value()){
+        if(!rhs->has_float_value()) return false;
         if(lhs->float_value() != rhs->float_value()) return false;
-    } else if (lhs->has_sint32_value() && !rhs->has_sint32_value()){
+    } else if (lhs->has_sint32_value()){
+        if(!rhs->has_sint32_value()) return false;
         if(lhs->sint32_value() != rhs->sint32_value()) return false;
-    } else if (lhs->has_sint64_value() && !rhs->has_sint64_value()){
+    } else if (lhs->has_sint64_value()){
+        if(!rhs->has_sint64_value()) return false;
         if(lhs->sint64_value() != rhs->sint64_value()) return false;
-    } else if (lhs->has_uint32_value() && !rhs->has_uint32_value()){
+    } else if (lhs->has_uint32_value()){
+        if(!rhs->has_uint32_value()) return false;
         if(lhs->uint32_value() != rhs->uint32_value()) return false;
-    } else if (lhs->has_uint64_value() && !rhs->has_uint64_value()){
+    } else if (lhs->has_uint64_value()){
+        if(!rhs->has_uint64_value()) return false;
         if(lhs->uint64_value() != rhs->uint64_value()) return false;
-    } else if (lhs->has_bool_value() && !rhs->has_bool_value()){
+    } else if (lhs->has_bool_value()){
+        if(!rhs->has_bool_value()) return false;
         if(lhs->bool_value() != rhs->bool_value()) return false;
-    } else if (lhs->has_string_value() && !rhs->has_string_value()){
+    } else if (lhs->has_string_value()){
+        if(!rhs->has_string_value()) return false;
         if(lhs->string_value() != rhs->string_value()) return false;
-    } else if (lhs->has_raw_data() && !rhs->has_raw_data()){
+    } else if (lhs->has_raw_data()){
+        if(!rhs->has_raw_data()) return false;
         if(lhs->raw_data() != rhs->raw_data()) return false;
     } else {
         throw std::runtime_error("Not Implemented Error");
