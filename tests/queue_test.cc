@@ -8,81 +8,81 @@
 
 using namespace efesx::queue;
 
-TEST(queue_test, simple_test)
+TEST(QueueTest, Simple)
 {
-    queue q;
+    queue meq;
 
-    EXPECT_TRUE(q.empty());
-    EXPECT_EQ(q.amount(), 0);
+    EXPECT_TRUE(meq.empty());
+    EXPECT_EQ(meq.amount(), 0);
 
     int int_vars[5] = {-2, -1, 0, 1, 2};
-    q.enqueue(0, int_vars[0]);
-    q.enqueue(1, int_vars[1]);
-    q.enqueue(2, int_vars[2]);
-    q.enqueue(3, int_vars[3]);
-    q.enqueue(4, int_vars[4]);
-    q.enqueue(0, int_vars, sizeof(int_vars));
+    meq.enqueue(0, int_vars[0]);
+    meq.enqueue(1, int_vars[1]);
+    meq.enqueue(2, int_vars[2]);
+    meq.enqueue(3, int_vars[3]);
+    meq.enqueue(4, int_vars[4]);
+    meq.enqueue(0, int_vars, sizeof(int_vars));
 
-    EXPECT_FALSE(q.empty());
-    EXPECT_EQ(q.amount(), 6);
+    EXPECT_FALSE(meq.empty());
+    EXPECT_EQ(meq.amount(), 6);
 
-    EXPECT_EQ(q.dequeue()->data_case(), node_value_t::kSint32Value);
-    EXPECT_TRUE(q.dequeue()->has_sint32_value());
-    EXPECT_EQ(q.dequeue()->sint32_value(), int_vars[4]);
-    q.pop();
+    EXPECT_EQ(meq.dequeue()->data_case(), node_value_t::kSint32Value);
+    EXPECT_TRUE(meq.dequeue()->has_sint32_value());
+    EXPECT_EQ(meq.dequeue()->sint32_value(), int_vars[4]);
+    meq.pop();
 
-    EXPECT_EQ(q.dequeue()->sint32_value(),  int_vars[3]); q.pop();
-    EXPECT_EQ(q.dequeue()->sint32_value(),  int_vars[2]); q.pop();
-    EXPECT_EQ(q.dequeue()->sint32_value(),  int_vars[1]); q.pop();
-    EXPECT_EQ(q.dequeue()->sint32_value(),  int_vars[0]); q.pop();
+    EXPECT_EQ(meq.dequeue()->sint32_value(),  int_vars[3]); meq.pop();
+    EXPECT_EQ(meq.dequeue()->sint32_value(),  int_vars[2]); meq.pop();
+    EXPECT_EQ(meq.dequeue()->sint32_value(),  int_vars[1]); meq.pop();
+    EXPECT_EQ(meq.dequeue()->sint32_value(),  int_vars[0]); meq.pop();
 
-    EXPECT_EQ(q.dequeue()->data_case(), node_value_t::kRawData);
-    EXPECT_TRUE(q.dequeue()->has_raw_data());
-    EXPECT_EQ(queue_raw_data_cast<int>(q.dequeue()->raw_data())[0], -2);
-    q.pop();
+    EXPECT_EQ(meq.dequeue()->data_case(), node_value_t::kRawData);
+    EXPECT_TRUE(meq.dequeue()->has_raw_data());
+    EXPECT_EQ(queue_raw_data_cast<int>(meq.dequeue()->raw_data())[0], -2);
+    meq.pop();
 
-    EXPECT_TRUE(q.empty());
-    EXPECT_EQ(q.amount(), 0);
+    EXPECT_TRUE(meq.empty());
+    EXPECT_EQ(meq.amount(), 0);
 
-    q.enqueue(0, int8_t{-56});
-    EXPECT_EQ(q.dequeue()->sint32_value(), -56);
+    meq.enqueue(0, int8_t{-56});
+    EXPECT_EQ(meq.dequeue()->sint32_value(), -56);
 }
 
-TEST(queue_test, save_load_test)
+TEST(QueueTest, SaveLoad)
 {
-    queue q;
-    q.enqueue(0, std::string("asda23sd"));
-    q.enqueue(0, std::string("asd2asd"));
-    q.enqueue(0, std::string("asdgasd"));
-    q.enqueue(0, std::string("asdasdfasd"));
-    q.enqueue(0, std::string("asdasdasd"));
-    q.enqueue(0, std::string("asdasd"));
-    q.enqueue(0, std::string("asda.csd"));
-    q.enqueue(0, std::string("asda54sd"));
-    q.enqueue(0, std::string("assfdgddasd"));
-    q.enqueue(0, std::string("asgagdasd"));
-    q.enqueue(0, std::string("asdl.asd"));
-    q.enqueue(0, std::string("asdahfsd"));
+    queue meq;
+    meq.enqueue(0, std::string("asda23sd"));
+    meq.enqueue(0, std::string("asd2asd"));
+    meq.enqueue(0, std::string("asdgasd"));
+    meq.enqueue(0, std::string("asdasdfasd"));
+    meq.enqueue(0, std::string("asdasdasd"));
+    meq.enqueue(0, std::string("asdasd"));
+    meq.enqueue(0, std::string("asda.csd"));
+    meq.enqueue(0, std::string("asda54sd"));
+    meq.enqueue(0, std::string("assfdgddasd"));
+    meq.enqueue(0, std::string("asgagdasd"));
+    meq.enqueue(0, std::string("asdl.asd"));
+    meq.enqueue(0, std::string("asdahfsd"));
 
-    EXPECT_EQ(q.amount(), 12);
-    q.save_to_disk("equeue.data");
+    EXPECT_EQ(meq.amount(), 12);
+    meq.save_to_disk("equeue.data");
 
-    queue qq;
-    qq.load_from_disk("equeue.data");
-    EXPECT_EQ(q, qq);
+    queue meqq;
+    meqq.load_from_disk("equeue.data");
+    EXPECT_EQ(meq, meqq);
 }
 
-TEST(queue_test, many_data_test){
-    std::size_t N_DATA = 1000000;
+TEST(QueueTest, ManyData){
+    const std::size_t N_DATA = 1000000;
 
-    queue q;
+    queue meq;
     for (auto i = 0; i < N_DATA; i++){
-        q.enqueue(0, i);
+        meq.enqueue(0, i);
     }
-    EXPECT_EQ(q.amount(), N_DATA);
-    q.save_to_disk("equeue_md.data");
+    EXPECT_EQ(meq.amount(), N_DATA);
+    meq.save_to_disk("equeue_md.data");
 
-    queue qq;
-    qq.load_from_disk("equeue_md.data");
-    EXPECT_EQ(q, qq);
+    queue meqq;
+    meqq.load_from_disk("equeue_md.data");
+    EXPECT_EQ(meq, meqq);
 }

@@ -19,6 +19,7 @@ template<typename Storage>
 class basic_queue {
 private:
     Storage storage;
+    int a = 8;
 public:
     basic_queue() = default;
     ~basic_queue() = default;

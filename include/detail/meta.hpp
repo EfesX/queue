@@ -1,8 +1,8 @@
 #pragma once
 
-#include <type_traits>
 #include <concepts>
 #include <string>
+#include <type_traits>
 
 #include "types.hpp"
 

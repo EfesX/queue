@@ -54,6 +54,8 @@ get_filename_component(hw_proto_path ${hw_proto} PATH)
 set(hw_proto_srcs "${CMAKE_CURRENT_BINARY_DIR}/queue.pb.cc")
 set(hw_proto_hdrs "${CMAKE_CURRENT_BINARY_DIR}/queue.pb.h")
 
+#set_source_files_properties(${hw_proto_srcs} ${hw_proto_hdrs} PROPERTIES SKIP_LINTING ON)
+
 add_custom_command(
     OUTPUT ${hw_proto_srcs} ${hw_proto_hdrs}
     COMMAND ${PROTOC_EXEC}
@@ -68,3 +70,5 @@ add_custom_command(
 add_library(${HW_PROTO} ${hw_proto_srcs} ${hw_proto_hdrs})
 target_link_libraries(${HW_PROTO} PUBLIC protobuf::libprotobuf)
 target_include_directories(${HW_PROTO} INTERFACE ${CMAKE_CURRENT_BINARY_DIR})
+
+set_target_properties(${HW_PROTO} PROPERTIES SKIP_LINTING ON)

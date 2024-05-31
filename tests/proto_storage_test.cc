@@ -5,107 +5,107 @@
 using namespace efesx::queue::detail;
 
 template<typename T>
-void test_type(proto_storage& s, T&& _val){
-    auto size_before = s.amount();
+void test_type(proto_storage& mps, T&& _val){
+    auto size_before = mps.amount();
 
-    s.insert(0, _val);
+    mps.insert(0, _val);
 
-    auto test_1 = [](proto_storage& s, T& v){
-        s.insert(0, v);
+    auto test_1 = [](proto_storage& mps, T& v){
+        mps.insert(0, v);
     };
 
-    auto test_2 = [](proto_storage& s, const T& v){
-        s.insert(0, v);
+    auto test_2 = [](proto_storage& mps, const T& v){
+        mps.insert(0, v);
     };
 
     T val = _val;
-    test_1(s, val);
-    test_2(s, val);
+    test_1(mps, val);
+    test_2(mps, val);
 
-    EXPECT_EQ(s.amount(), size_before + 3);
+    EXPECT_EQ(mps.amount(), size_before + 3);
 }
 
-TEST(proto_storage_test, test_1)
+TEST(ProtoStorageTest, test_1)
 {
-    proto_storage s;
+    proto_storage mps;
 
-    test_type(s, int{8});
-    test_type(s, int8_t{8});
-    test_type(s, int16_t{8});
-    test_type(s, int32_t{8});
-    test_type(s, int64_t{8});
+    test_type(mps, int{8});
+    test_type(mps, int8_t{8});
+    test_type(mps, int16_t{8});
+    test_type(mps, int32_t{8});
+    test_type(mps, int64_t{8});
 
-    test_type(s, uint8_t{8});
-    test_type(s, uint16_t{8});
-    test_type(s, uint32_t{8});
-    test_type(s, uint64_t{8});
+    test_type(mps, uint8_t{8});
+    test_type(mps, uint16_t{8});
+    test_type(mps, uint32_t{8});
+    test_type(mps, uint64_t{8});
 
-    test_type(s, bool{true});
+    test_type(mps, bool{true});
 
-    test_type(s, double{1.111111});
-    test_type(s, float{2.2222222});
+    test_type(mps, double{1.111111});
+    test_type(mps, float{2.2222222});
 
-    test_type(s, std::string("asdasd"));
+    test_type(mps, std::string("asdasd"));
 
-    s.insert(0, "new string", sizeof("new string"));
+    mps.insert(0, "new string", sizeof("new string"));
 
-    s.save("test.pb");
+    mps.save("test.pb");
 
-    proto_storage ss;
-    ss.load("test.pb");
+    proto_storage mpss;
+    mpss.load("test.pb");
 
-    EXPECT_EQ(s, ss);
+    EXPECT_EQ(mps, mpss);
 
-    ss.insert(0, uint32_t{8});
+    mpss.insert(0, uint32_t{8});
 
-    EXPECT_TRUE(s != ss);
+    EXPECT_TRUE(mps != mpss);
 }
 
-TEST(proto_storage_test, test_2)
+TEST(ProtoStorageTest, test_2)
 {
-    proto_storage s;
+    proto_storage mps;
 
-    EXPECT_TRUE(s.empty());
+    EXPECT_TRUE(mps.empty());
 
-    s.insert(1, int{-8});
-    s.insert(5, uint64_t{1});
+    mps.insert(1, int{-8});
+    mps.insert(5, uint64_t{1});
 
-    EXPECT_FALSE(s.empty());
-    EXPECT_EQ(s.amount(), 2);
+    EXPECT_FALSE(mps.empty());
+    EXPECT_EQ(mps.amount(), 2);
 
-    s.extract()->set_uint64_value(uint64_t{2});
+    mps.extract()->set_uint64_value(uint64_t{2});
 
-    EXPECT_EQ(s.amount(), 2);
-    EXPECT_EQ(s.extract()->uint64_value(), uint64_t{2});    
+    EXPECT_EQ(mps.amount(), 2);
+    EXPECT_EQ(mps.extract()->uint64_value(), uint64_t{2});    
     
-    s.pop();
-    EXPECT_EQ(s.amount(), 1);
+    mps.pop();
+    EXPECT_EQ(mps.amount(), 1);
 
-    EXPECT_EQ(s.extract()->sint32_value(), int{-8});
-    EXPECT_EQ(s.extract()->sint32_value(), int{-8});
-    EXPECT_EQ(s.amount(), 1);
+    EXPECT_EQ(mps.extract()->sint32_value(), int{-8});
+    EXPECT_EQ(mps.extract()->sint32_value(), int{-8});
+    EXPECT_EQ(mps.amount(), 1);
 
-    s.pop();
-    EXPECT_EQ(s.amount(), 0);
-    EXPECT_TRUE(s.empty());
+    mps.pop();
+    EXPECT_EQ(mps.amount(), 0);
+    EXPECT_TRUE(mps.empty());
 
-    s.insert(0, std::string("one"));
-    s.insert(1, uint16_t{2});
-    s.insert(2, int64_t{-3000});
+    mps.insert(0, std::string("one"));
+    mps.insert(1, uint16_t{2});
+    mps.insert(2, int64_t{-3000});
 
-    EXPECT_EQ(s.extract()->sint64_value(), int64_t{-3000});
-    s.pop();
-    EXPECT_EQ(s.extract()->uint32_value(), uint16_t{2});
-    s.pop();
-    EXPECT_EQ(s.extract()->string_value(), std::string{"one"});
-    s.pop();
+    EXPECT_EQ(mps.extract()->sint64_value(), int64_t{-3000});
+    mps.pop();
+    EXPECT_EQ(mps.extract()->uint32_value(), uint16_t{2});
+    mps.pop();
+    EXPECT_EQ(mps.extract()->string_value(), std::string{"one"});
+    mps.pop();
 
-    EXPECT_TRUE(s.empty());
+    EXPECT_TRUE(mps.empty());
 
     int arr[2] = { -6, -9 };
 
-    s.insert(0, (void*)arr, 8);
-    EXPECT_FALSE(s.empty());
-    EXPECT_EQ(((int*)s.extract()->raw_data().c_str())[0], -6);
-    EXPECT_EQ(((int*)s.extract()->raw_data().c_str())[1], -9);
+    mps.insert(0, (void*)arr, 8);
+    EXPECT_FALSE(mps.empty());
+    EXPECT_EQ(((int*)mps.extract()->raw_data().c_str())[0], -6);
+    EXPECT_EQ(((int*)mps.extract()->raw_data().c_str())[1], -9);
 }
