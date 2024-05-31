@@ -1,0 +1,53 @@
+syntax = "proto3";
+package efesx.queue.detail.proto;
+
+//import "google/protobuf/timestamp.proto";
+
+message QueueStorageNode {
+    int32 priority = 1;
+    
+    oneof data {
+        double double_value = 2;
+        float  float_value  = 3;
+        sint32 sint32_value  = 4;
+        sint64 sint64_value  = 5;
+        uint32 uint32_value = 6;
+        uint64 uint64_value = 7;
+        bool   bool_value   = 8;
+        string string_value = 9;
+        bytes  raw_data     = 10;
+    }
+
+    //google.protobuf.Timestamp created_at = 11;
+}
+
+message QueueStorage {
+    repeated QueueStorageNode node = 1;
+}
+
+
+//================== GRPC ==================
+/*
+enum OpCode {
+    CREATE_QUEUE = 0;
+    PUSH_DATA = 1;
+    POP_DATA  = 2;
+    DELETE_QUEUE = 3;
+}
+
+enum StatusCode {
+    SUCCESS = 0;
+    UNKNOWN_ERROR = 1;
+}
+
+message QueueRequest {
+    OpCode opcode  = 1;
+    string name_queue = 2;
+    optional QueueStorage = 3;
+}
+
+message QueueReply {
+    StatusCode status = 1;
+    optional QueueStorage = 2;
+}
+*/
