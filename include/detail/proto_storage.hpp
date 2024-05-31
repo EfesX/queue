@@ -42,7 +42,7 @@ bool operator==(const node_p_t& lhs, const node_p_t& rhs){
     } else if (lhs->has_raw_data() && !rhs->has_raw_data()){
         if(lhs->raw_data() != rhs->raw_data()) return false;
     } else {
-        static_assert(false, "Not Implemented Error");
+        throw std::runtime_error("Not Implemented Error");
     }
 
     return true;
