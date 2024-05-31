@@ -19,7 +19,7 @@ using node_p_t         = std::shared_ptr<QueueStorageNode>;
 template<typename T>
 using node_container_t = std::list<T>;
 
-bool operator==(const node_p_t& lhs, const node_p_t& rhs){ //[readability-function-cognitive-complexity]
+bool operator==(const node_p_t& lhs, const node_p_t& rhs){
     if (lhs->priority() != rhs->priority()) return false;
     //if (lhs->created_at() != rhs->created_at()) return false;
     
@@ -42,7 +42,7 @@ bool operator==(const node_p_t& lhs, const node_p_t& rhs){ //[readability-functi
     } else if (lhs->has_raw_data() && !rhs->has_raw_data()){
         if(lhs->raw_data() != rhs->raw_data()) return false;
     } else {
-        std::runtime_error("Not Implemented Error");
+        static_assert(false, "Not Implemented Error");
     }
 
     return true;
