@@ -4,25 +4,48 @@
 
 using namespace efesx::queue::detail;
 
+template<typename T>
+void test_type(proto_storage& s, T&& _val){
+    auto size_before = s.amount();
+
+    s.insert(0, _val);
+
+    auto test_1 = [](proto_storage& s, T& v){
+        s.insert(0, v);
+    };
+
+    auto test_2 = [](proto_storage& s, const T& v){
+        s.insert(0, v);
+    };
+
+    T val = _val;
+    test_1(s, val);
+    test_2(s, val);
+
+    EXPECT_EQ(s.amount(), size_before + 3);
+}
+
 TEST(proto_storage_test, test_1)
 {
     proto_storage s;
 
-    s.insert(1, int{8});
-    s.insert(0, int8_t{8});
-    s.insert(0, int16_t{8});
-    s.insert(0, int32_t{8});
-    s.insert(0, int64_t{8});
+    test_type(s, int{8});
+    test_type(s, int8_t{8});
+    test_type(s, int16_t{8});
+    test_type(s, int32_t{8});
+    test_type(s, int64_t{8});
 
-    s.insert(0, uint8_t{8});
-    s.insert(0, uint16_t{8});
-    s.insert(0, uint32_t{8});
-    s.insert(0, uint64_t{8});
+    test_type(s, uint8_t{8});
+    test_type(s, uint16_t{8});
+    test_type(s, uint32_t{8});
+    test_type(s, uint64_t{8});
 
-    s.insert(0, bool{false});
-    s.insert(0, bool{true});
+    test_type(s, bool{true});
 
-    s.insert(0, std::string("string"));
+    test_type(s, double{1.111111});
+    test_type(s, float{2.2222222});
+
+    test_type(s, std::string("asdasd"));
 
     s.insert(0, "new string", sizeof("new string"));
 
