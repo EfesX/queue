@@ -106,6 +106,6 @@ TEST(ProtoStorageTest, test_2)
 
     mps.insert(0, static_cast<void*>(arr), 8);
     EXPECT_FALSE(mps.empty());
-    EXPECT_EQ((static_cast<int*>(mps.extract()->raw_data().c_str()))[0], -6);
-    EXPECT_EQ((static_cast<int*>(mps.extract()->raw_data().c_str()))[1], -9);
+    EXPECT_EQ((reinterpret_cast<const int*>(mps.extract()->raw_data().c_str()))[0], -6);
+    EXPECT_EQ((reinterpret_cast<const int*>(mps.extract()->raw_data().c_str()))[1], -9);
 }

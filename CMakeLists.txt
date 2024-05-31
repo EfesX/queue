@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_subdirectory(proto)
 
-set(CMAKE_CXX_CLANG_TIDY clang-tidy)
+#set(CMAKE_CXX_CLANG_TIDY clang-tidy)
 
 add_library(${PROJECT_NAME} INTERFACE)
 target_sources(${PROJECT_NAME} INTERFACE
