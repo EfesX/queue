@@ -11,8 +11,8 @@ namespace queue {
 
 using storage_t    = detail::proto_storage;
 
-using node_t       = storage_t::node_t;
-using node_p_t     = storage_t::node_p_t;
+using node_t       = storage_t::node;
+using node_p_t     = storage_t::node_p;
 using node_value_t = node_t::DataCase;
 
 template<typename Storage>

@@ -83,8 +83,8 @@ private:
     node_container_t<wrapper_node> store;
 
 public:
-    using node_t   = node_t;
-    using node_p_t = node_p_t;
+    using node   = node_t;
+    using node_p = node_p_t;
 
     proto_storage() = default;
     ~proto_storage() = default;
