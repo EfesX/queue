@@ -19,7 +19,7 @@ using node_p_t         = std::shared_ptr<QueueStorageNode>;
 template<typename T>
 using node_container_t = std::list<T>;
 
-bool operator==(const node_p_t& lhs, const node_p_t& rhs){
+bool operator==(const node_p_t lhs, const node_p_t rhs){
     if (lhs->priority() != rhs->priority()) return false;
     //if (lhs->created_at() != rhs->created_at()) return false;
     
@@ -64,11 +64,12 @@ private:
         node_p_t node;
 
         wrapper_node() : node(std::make_shared<node_t>()) {}
-        explicit wrapper_node(const node_t& _node) : node(std::make_shared<node_t>(_node)) {}
+        wrapper_node(const node_t& _node) {
+            node = std::make_shared<node_t>(_node);
+        }
 
         wrapper_node(const wrapper_node&) = delete;
         wrapper_node(wrapper_node&&) = delete;
-        wrapper_node& operator=(wrapper_node&) = delete;
         wrapper_node& operator=(wrapper_node&&) = delete;
         ~wrapper_node() = default;
 
@@ -84,11 +85,16 @@ private:
     node_container_t<wrapper_node> store;
 
 public:
-    using node   = node_t;
-    using node_p = node_p_t;
+    using node_t   = node_t;
+    using node_p_t = node_p_t;
 
     proto_storage() = default;
     ~proto_storage() = default;
+    
+    proto_storage(const proto_storage&) = delete;
+    proto_storage(proto_storage&&) = delete;
+    proto_storage& operator=(proto_storage&&) = delete;
+    proto_storage operator=(const proto_storage&) = delete;
 
     inline node_p_t& extract(){
         return store.back().node;
