@@ -3,22 +3,32 @@ on:
    push:
       branches: [ "main", "develop" ]
    pull_request:
-      branches: [ "main", "develop" ]
+      branches: [ "main" ]
       
 jobs:
    build_job:
       runs-on: ubuntu-latest
+      
       steps:
-         - uses: actions/checkout@v3
+        - name: checkout
+          uses: actions/checkout@v4
+          with:
+            submodules: true
 
-         - name: installing
-           run: sudo apt install cmake make g++ clang-tidy
+        - uses: actions/cache@v3
+          with:
+            path: vcpkg
+            key: ${{ runner.os }}-vcpkg-${{ hashFiles('./vcpkg/downloads/*.tar.gz') }}
+            restore-keys: ${{ runner.os }}-vcpkg-
 
-         - name: configuring
-           run: cmake -S . -B build
+        - name: installing
+          run: sudo apt install cmake make g++ clang-tidy
 
-         - name: building
-           run: cmake --build build
+        - name: configuring
+          run: cmake -S . -B build
 
-         - name: testing
-           run: ctest -VV --test-dir build/tests
+        - name: building
+          run: cmake --build build
+
+        - name: testing
+          run: ctest -VV --test-dir build/tests
