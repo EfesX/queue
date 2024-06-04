@@ -15,11 +15,11 @@ jobs:
           with:
             submodules: true
 
-#        - uses: actions/cache@v3
-#          with:
-#            path: vcpkg
-#            key: ${{ runner.os }}-vcpkg-${{ hashFiles('./vcpkg/downloads/*.tar.gz') }}
-#            restore-keys: ${{ runner.os }}-vcpkg-
+        - uses: actions/cache@v3
+          with:
+            path: build/vcpkg_installed/vcpkg/info
+            key: ${{ runner.os }}-vcpkg-info-${{ hashFiles('./build/vcpkg_installed/vcpkg/info/*.list') }}
+            restore-keys: ${{ runner.os }}-vcpkg-info-
 
         - name: installing
           run: |
