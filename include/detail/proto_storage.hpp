@@ -85,8 +85,8 @@ private:
     node_container_t<wrapper_node> store;
 
 public:
-    using node_t   = node_t;
-    using node_p_t = node_p_t;
+    using node   = node_t;
+    using node_ptr = node_p_t;
 
     proto_storage() = default;
     ~proto_storage() = default;
@@ -168,7 +168,7 @@ public:
         QueueStorage pb_store;
 
         for (auto it = store.rbegin(); it != store.rend(); it++){
-            node_t* _node = pb_store.add_node();
+            node* _node = pb_store.add_node();
             // is it really nead to copy? may be to swap and to erase?
             _node->CopyFrom(*it->node.get());
         }

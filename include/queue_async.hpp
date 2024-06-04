@@ -14,8 +14,8 @@ namespace efesx::queue_async {
 
 using storage_t    = queue::detail::proto_storage;
 
-using node_t       = storage_t::node_t;
-using node_p_t     = storage_t::node_p_t;
+using node_t       = storage_t::node;
+using node_p_t     = storage_t::node_ptr;
 using node_value_t = node_t::DataCase;
 
 template<typename BasicQueue>
