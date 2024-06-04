@@ -3,8 +3,8 @@ LibraryInstall(protobuf)
 LibraryInstall(grpc)
 
 ########################################################################
-include(FindProtobuf)
-message(STATUS "Using Protobuf protoc executable ${Protobuf_PROTOC_EXECUTABLE}")
+find_package(Protobuf CONFIG REQUIRED)
+find_program(PROTOC_EXE protoc REQUIRED)
 ########################################################################
 find_package(gRPC CONFIG REQUIRED)
 
@@ -22,7 +22,7 @@ set(hw_proto_hdrs "${CMAKE_CURRENT_BINARY_DIR}/queue.pb.h")
 
 add_custom_command(
     OUTPUT ${hw_proto_srcs} ${hw_proto_hdrs}
-    COMMAND ${Protobuf_PROTOC_EXECUTABLE}
+    COMMAND ${PROTOC_EXE}
     ARGS --cpp_out ${CMAKE_CURRENT_BINARY_DIR}
         --grpc_out ${CMAKE_CURRENT_BINARY_DIR}
         -I ${hw_proto_path}

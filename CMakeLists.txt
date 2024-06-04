@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.27)
+cmake_minimum_required(VERSION 3.28)
 
 set(VCPKG_ROOT "vcpkg" CACHE PATH "vcpkg root dir")
 set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE FILEPATH "toolchain")
@@ -36,10 +36,6 @@ function(LibraryInstall LIB)
     execute_process(COMMAND ${VCPKG_EXEC} install ${LIB})
 endfunction()
 
-message(STATUS ">>>> ${VCPKG_EXEC}")
-message(STATUS ">>>> ${VCPKG_ROOT}")
-message(STATUS ">>>> ${CMAKE_TOOLCHAIN_FILE}")
-
 #############################################################
 add_subdirectory(proto)
 
@@ -59,3 +55,6 @@ target_sources(${PROJECT_NAME} INTERFACE
 if(${BUILD_TESTS})
     add_subdirectory(tests)
 endif()
+
+message(STATUS "Installed libs by vcpkg:")
+execute_process(COMMAND ${VCPKG_EXEC} list)
