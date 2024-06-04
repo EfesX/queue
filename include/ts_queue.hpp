@@ -10,7 +10,7 @@
 
 using namespace std::chrono_literals;
 
-namespace efesx::queue_async {
+namespace efesx::ts_queue {
 
 using storage_t    = queue::detail::proto_storage;
 
@@ -19,19 +19,19 @@ using node_p_t     = storage_t::node_ptr;
 using node_value_t = node_t::DataCase;
 
 template<typename BasicQueue>
-class basic_queue_async {
+class basic_ts_queue {
 private:
     BasicQueue queue;
     std::shared_mutex mtx;
 
 public:
-    basic_queue_async() = default;
-    ~basic_queue_async() = default;
+    basic_ts_queue() = default;
+    ~basic_ts_queue() = default;
 
-    basic_queue_async(const basic_queue_async&)  = delete;
-    basic_queue_async(basic_queue_async&&)  = delete;
-    basic_queue_async& operator=(basic_queue_async&&) = delete;
-    basic_queue_async operator=(const basic_queue_async&) = delete;
+    basic_ts_queue(const basic_ts_queue&)  = delete;
+    basic_ts_queue(basic_ts_queue&&)  = delete;
+    basic_ts_queue& operator=(basic_ts_queue&&) = delete;
+    basic_ts_queue operator=(const basic_ts_queue&) = delete;
 
     /**
      * @brief Put any (any standard type in C++, except classes, structs and enums) data to queue.
@@ -99,11 +99,11 @@ public:
         return queue.load_from_disk(file);
     }
 
-    bool operator==(const basic_queue_async<BasicQueue>& oth) const {
+    bool operator==(const basic_ts_queue<BasicQueue>& oth) const {
         return (queue == oth.queue);
     }
 };
 
-using queue_async = basic_queue_async<efesx::queue::basic_queue<storage_t>>;
+using ts_queue = basic_ts_queue<efesx::queue::basic_queue<storage_t>>;
 
-}; // namespace efesx::queue_async
+}; // namespace efesx::ts_queue

@@ -6,16 +6,16 @@
 #include <vector>
 #include <cstdlib>
 
-#include "queue_async.hpp"
+#include "ts_queue.hpp"
 #include "utils.hpp"
 
 #include <thread>
 
-using namespace efesx::queue_async;
+using namespace efesx::ts_queue;
 
 TEST(QueueAsyncTest, Simple)
 {
-    queue_async queue;
+    ts_queue queue;
     queue.enqueue(0, 5);
     queue.enqueue(0, -25);
     queue.enqueue(0, 65.8);
@@ -25,7 +25,7 @@ TEST(QueueAsyncTest, Simple)
 
     queue.save_to_disk("asynctest.simple.data");
 
-    queue_async r_queue;
+    ts_queue r_queue;
     r_queue.load_from_disk("asynctest.simple.data");
 
     EXPECT_EQ(queue, r_queue);
@@ -36,8 +36,8 @@ class Fixture : public ::testing::TestWithParam<int>{};
 TEST_P(Fixture, SPSC){
     const int NUM_DATA = 100000;
 
-    queue_async ref_queue;
-    queue_async p_queue;
+    ts_queue ref_queue;
+    ts_queue p_queue;
 
     {
         std::thread producer([&](){
@@ -49,7 +49,7 @@ TEST_P(Fixture, SPSC){
             }
         });
 
-        queue_async c_queue;
+        ts_queue c_queue;
 
         std::thread consumer([&](){
             for(auto i = 0; i < NUM_DATA; i++){
@@ -68,7 +68,7 @@ TEST_P(Fixture, SPSC){
         EXPECT_EQ(ref_queue, c_queue);
     }
     {
-        queue_async queue;
+        ts_queue queue;
         queue.load_from_disk("asynctest.spsc.data");
 
         EXPECT_EQ(ref_queue, queue);
@@ -81,9 +81,9 @@ TEST_P(Fixture, MPMC){
     const int NUM_CONSUMERS = GetParam() + 1;
     const int NUM_PRODUCERS = GetParam() + 1;
 
-    queue_async p_queue;
-    queue_async c_queue;
-    queue_async ref_queue;
+    ts_queue p_queue;
+    ts_queue c_queue;
+    ts_queue ref_queue;
 
     std::vector<std::thread> consumers;
     std::vector<std::thread> producers;
@@ -135,7 +135,7 @@ TEST_P(Fixture, MPMC){
 
     c_queue.save_to_disk("asynctest.mpmc.data");
 
-    queue_async r_queue;
+    ts_queue r_queue;
     r_queue.load_from_disk("asynctest.mpmc.data");
     EXPECT_EQ(r_queue, c_queue);
 
