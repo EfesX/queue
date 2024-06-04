@@ -55,6 +55,3 @@ target_sources(${PROJECT_NAME} INTERFACE
 if(${BUILD_TESTS})
     add_subdirectory(tests)
 endif()
-
-message(STATUS "Installed libs by vcpkg:")
-execute_process(COMMAND ${VCPKG_EXEC} list)
