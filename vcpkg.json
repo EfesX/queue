@@ -1,0 +1,4 @@
+{
+    "name": "equeue",
+    "dependencies": [ "protobuf", "grpc", "gtest" ]
+} 

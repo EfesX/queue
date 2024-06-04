@@ -1,4 +1,4 @@
-LibraryInstall(gtest)
+#LibraryInstall(gtest)
 find_package(GTest CONFIG REQUIRED)
 
 set(GTEST_LINK GTest::gtest GTest::gtest_main)

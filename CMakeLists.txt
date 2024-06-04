@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.28)
 
-set(VCPKG_ROOT "vcpkg" CACHE PATH "vcpkg root dir")
-set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE FILEPATH "toolchain")
+#set(VCPKG_ROOT "vcpkg" CACHE PATH "vcpkg root dir")
+#set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE FILEPATH "toolchain")
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -18,23 +18,23 @@ add_custom_target(
     --config-file=${CMAKE_SOURCE_DIR}/.clang-tidy
 )
 
-if(UNIX)
-    if(NOT EXISTS ${VCPKG_ROOT}/vcpkg) 
-        execute_process(COMMAND ./bootstrap-vcpkg.sh -disableMetrics WORKING_DIRECTORY ${VCPKG_ROOT})
-    endif()
-    set(VCPKG_EXEC ${VCPKG_ROOT}/vcpkg CACHE FILEPATH "vcpkg executable")
-elseif(WIN32)
-    if(NOT EXISTS ${VCPKG_ROOT}/vcpkg) 
-        execute_process(COMMAND ./bootstrap-vcpkg.bat -disableMetrics WORKING_DIRECTORY ${VCPKG_ROOT})
-    endif()
-    set(VCPKG_EXEC ${VCPKG_ROOT}/vcpkg.exe CACHE FILEPATH "vcpkg executable")
-else()
-    message(FATAL_ERROR "Not Recognized OS Error")
-endif()
-
-function(LibraryInstall LIB)
-    execute_process(COMMAND ${VCPKG_EXEC} install ${LIB})
-endfunction()
+#if(UNIX)
+#    if(NOT EXISTS ${VCPKG_ROOT}/vcpkg) 
+#        execute_process(COMMAND ./bootstrap-vcpkg.sh -disableMetrics WORKING_DIRECTORY ${VCPKG_ROOT})
+#    endif()
+#    set(VCPKG_EXEC ${VCPKG_ROOT}/vcpkg CACHE FILEPATH "vcpkg executable")
+#elseif(WIN32)
+#    if(NOT EXISTS ${VCPKG_ROOT}/vcpkg) 
+#        execute_process(COMMAND ./bootstrap-vcpkg.bat -disableMetrics WORKING_DIRECTORY ${VCPKG_ROOT})
+#    endif()
+#    set(VCPKG_EXEC ${VCPKG_ROOT}/vcpkg.exe CACHE FILEPATH "vcpkg executable")
+#else()
+#    message(FATAL_ERROR "Not Recognized OS Error")
+#endif()
+#
+#function(LibraryInstall LIB)
+#    execute_process(COMMAND ${VCPKG_EXEC} install ${LIB})
+#endfunction()
 
 #############################################################
 add_subdirectory(proto)

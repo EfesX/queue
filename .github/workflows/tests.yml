@@ -15,20 +15,22 @@ jobs:
           with:
             submodules: true
 
-        - uses: actions/cache@v3
-          with:
-            path: vcpkg
-            key: ${{ runner.os }}-vcpkg-${{ hashFiles('./vcpkg/downloads/*.tar.gz') }}
-            restore-keys: ${{ runner.os }}-vcpkg-
+#        - uses: actions/cache@v3
+#          with:
+#            path: vcpkg
+#            key: ${{ runner.os }}-vcpkg-${{ hashFiles('./vcpkg/downloads/*.tar.gz') }}
+#            restore-keys: ${{ runner.os }}-vcpkg-
 
         - name: installing
-          run: sudo apt install cmake make g++ clang-tidy
+          run: |
+            sudo apt install cmake make g++ clang-tidy
+            git clone https://github.com/microsoft/vcpkg
 
         - name: configuring
-          run: cmake -S . -B build
+          run: cmake -DCMAKE_TOOLCHAIN_FILE=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake -S . -B build
 
         - name: building
-          run: cmake --build build
+          run: cmake --build build -j $(nproc)
 
         - name: testing
           run: ctest -VV --test-dir build/tests

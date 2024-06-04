@@ -1,14 +1,15 @@
 
-LibraryInstall(protobuf)
-LibraryInstall(grpc)
+#LibraryInstall(protobuf)
+#LibraryInstall(grpc)
 
 ########################################################################
-find_package(Protobuf CONFIG REQUIRED)
-find_program(PROTOC_EXE protoc REQUIRED)
-########################################################################
+include(FindProtobuf)
 find_package(gRPC CONFIG REQUIRED)
 
-find_program(GRPC_PLUGIN NAMES "grpc_cpp_plugin")
+find_program(PROTOC_EXE NAMES "protoc-${Protobuf_VERSION}.0" "protoc-${Protobuf_VERSION}.0.exe" REQUIRED)
+find_program(GRPC_PLUGIN NAMES "grpc_cpp_plugin" "grpc_cpp_plugin.exe" REQUIRED)
+
+message(STATUS "Found protoc : " ${PROTOC_EXE})
 message(STATUS "Found grpc_cpp_plugin : " ${GRPC_PLUGIN})
 ########################################################################
 
