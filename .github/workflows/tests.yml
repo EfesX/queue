@@ -17,7 +17,7 @@ jobs:
 
         - uses: actions/cache@v3
           with:
-            path: build/vcpkg_installed/vcpkg/info
+            path: build/vcpkg_installed
             key: ${{ runner.os }}-vcpkg-info-${{ hashFiles('./build/vcpkg_installed/vcpkg/info/*.list') }}
             restore-keys: ${{ runner.os }}-vcpkg-info-
 
