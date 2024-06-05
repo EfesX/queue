@@ -34,7 +34,7 @@ private:
     std::map<std::string, std::unique_ptr<ts_queue>>& pool;
     QueueStorageNode _node;
 public:
-    QueueServiceImpl(std::map<std::string, std::unique_ptr<ts_queue>>& _pool) : pool(_pool){}
+    explicit QueueServiceImpl(std::map<std::string, std::unique_ptr<ts_queue>>& _pool) : pool(_pool){}
 
     grpc::Status CreateQueue(
         grpc::ServerContext* _context, 
@@ -92,8 +92,6 @@ public:
         bool found = (pool.find(_request->name_queue()) != pool.end());
         auto statuscode = status::UNKNOWN_ERROR;
 
-        QueueStorageNode* reply_node;
-
         if(found){
             std::any node = pool[_request->name_queue()]->dequeue(true);
 
@@ -101,7 +99,7 @@ public:
                 try {
                     QueueStorageNode* extracted_node = std::any_cast<queue_p_node>(node).get();
                     
-                    reply_node = _reply->mutable_node();
+                    QueueStorageNode* reply_node = _reply->mutable_node();
                     reply_node->CopyFrom(*extracted_node);
 
                     statuscode = status::SUCCESS;
