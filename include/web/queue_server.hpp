@@ -32,7 +32,6 @@ using efesx::queue::detail::proto::QueueStorageNode;
 class QueueServiceImpl final : public service::Service {
 private:
     std::map<std::string, std::unique_ptr<ts_queue>>& pool;
-    QueueStorageNode _node;
 public:
     explicit QueueServiceImpl(std::map<std::string, std::unique_ptr<ts_queue>>& _pool) : pool(_pool){}
 
@@ -41,15 +40,13 @@ public:
         const request* _request,
         reply* _reply
     ) override {
-        bool found = (pool.find(_request->name_queue()) != pool.end());
-
-        if(found == false){
+        if((pool.find(_request->name_queue()) == pool.end())){
             pool[_request->name_queue()] = std::make_unique<ts_queue>();
+            _reply->set_status(status::SUCCESS);
+        } else {
+            _reply->set_status(status::UNKNOWN_ERROR);
         }
-            
-        auto statuscode = found ? status::UNKNOWN_ERROR : status::SUCCESS;
 
-        _reply->set_status(statuscode);
         return grpc::Status::OK;
     }
 
@@ -73,14 +70,19 @@ public:
         const request* _request,
         reply* _reply
     ) override {
-        bool found = (pool.find(_request->name_queue()) != pool.end());
-        auto statuscode = (found == _request->has_node() == true) ? status::SUCCESS : status::UNKNOWN_ERROR;
-
-        if(statuscode == status::SUCCESS){
-            pool[_request->name_queue()]->enqueue(_request->node());
+        if((pool.find(_request->name_queue()) == pool.end())){
+            _reply->set_status(status::UNKNOWN_ERROR);    
+            return grpc::Status::OK;
         }
 
-        _reply->set_status(statuscode);
+        if (!_request->has_node()){
+            _reply->set_status(status::UNKNOWN_ERROR);    
+            return grpc::Status::OK;
+        }
+
+        pool[_request->name_queue()]->enqueue(_request->node());
+
+        _reply->set_status(status::SUCCESS);
         return grpc::Status::OK;
     }
 
@@ -89,10 +91,9 @@ public:
         const request* _request,
         reply* _reply
     ) override {
-        bool found = (pool.find(_request->name_queue()) != pool.end());
         auto statuscode = status::UNKNOWN_ERROR;
 
-        if(found){
+        if((pool.find(_request->name_queue()) != pool.end())){
             std::any node = pool[_request->name_queue()]->dequeue(true);
 
             if(node.has_value()){
@@ -119,7 +120,6 @@ class queue_server {
 private:
     std::map<std::string, std::unique_ptr<ts_queue>> pool;
     std::unique_ptr<grpc::Server> server;
-    std::unique_ptr<std::thread> thread_server; 
 
     bool is_running = false;
 public:
