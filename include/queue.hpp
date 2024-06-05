@@ -12,14 +12,13 @@ namespace queue {
 using storage_t    = detail::proto_storage;
 
 using node_t       = storage_t::node;
-using node_p_t     = storage_t::node_p;
+using node_p_t     = storage_t::node_ptr;
 using node_value_t = node_t::DataCase;
 
 template<typename Storage>
 class basic_queue {
 private:
     Storage storage;
-    int a = 8;
 public:
     basic_queue() = default;
     ~basic_queue() = default;
@@ -39,7 +38,7 @@ public:
 
     /**
      * @brief Get top data node from queue
-     * @return node_p_t& - reference to shared pointer of data node in queue
+     * @return node_p_t& - the reference to shared pointer of data node in queue
     */
     node_p_t& dequeue(){
         return storage.extract();

@@ -3,22 +3,34 @@ on:
    push:
       branches: [ "main", "develop" ]
    pull_request:
-      branches: [ "main", "develop" ]
+      branches: [ "main" ]
       
 jobs:
    build_job:
       runs-on: ubuntu-latest
+      
       steps:
-         - uses: actions/checkout@v3
+        - name: checkout
+          uses: actions/checkout@v4
+          with:
+            submodules: true
 
-         - name: installing
-           run: sudo apt install cmake make g++ clang-tidy
+        - uses: actions/cache@v3
+          with:
+            path: build/vcpkg_installed
+            key: ${{ runner.os }}-vcpkg-${{ hashFiles('./vcpkg.json') }}
+            restore-keys: ${{ runner.os }}-vcpkg-
 
-         - name: configuring
-           run: cmake -S . -B build
+        - name: installing
+          run: |
+            sudo apt install cmake make g++ clang-tidy
+            git clone https://github.com/microsoft/vcpkg
 
-         - name: building
-           run: cmake --build build
+        - name: configuring
+          run: cmake -DCMAKE_TOOLCHAIN_FILE=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake -S . -B build
 
-         - name: testing
-           run: ctest -VV --test-dir build/tests
+        - name: building
+          run: cmake --build build -j $(nproc)
+
+        - name: testing
+          run: ctest -VV --test-dir build/tests

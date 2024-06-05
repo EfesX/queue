@@ -18,4 +18,4 @@ enum value_t {
 
 }; // namespace detail
 }; // namespace queue
-}; // namespace efesx
+}; // namespace detail

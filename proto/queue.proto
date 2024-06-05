@@ -27,27 +27,24 @@ message QueueStorage {
 
 
 //================== GRPC ==================
-/*
-enum OpCode {
-    CREATE_QUEUE = 0;
-    PUSH_DATA = 1;
-    POP_DATA  = 2;
-    DELETE_QUEUE = 3;
-}
-
 enum StatusCode {
     SUCCESS = 0;
     UNKNOWN_ERROR = 1;
 }
 
 message QueueRequest {
-    OpCode opcode  = 1;
     string name_queue = 2;
-    optional QueueStorage = 3;
+    optional QueueStorageNode node = 3;
 }
 
 message QueueReply {
     StatusCode status = 1;
-    optional QueueStorage = 2;
+    optional QueueStorageNode node = 2;
 }
-*/
+
+service QueueService {
+    rpc CreateQueue (QueueRequest) returns (QueueReply) {}
+    rpc DeleteQueue (QueueRequest) returns (QueueReply) {}
+    rpc PushData    (QueueRequest) returns (QueueReply) {}
+    rpc PopData     (QueueRequest) returns (QueueReply) {}
+}

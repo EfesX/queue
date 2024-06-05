@@ -3,3 +3,8 @@ build
 Testing
 
 /CMakePresets.json
+
+/*.data
+
+/vcpkg_installed
+/vcpkg
