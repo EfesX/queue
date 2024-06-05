@@ -50,6 +50,7 @@ target_sources(${PROJECT_NAME} INTERFACE
         detail/utils.hpp
         queue.hpp
         proto/queue.pb.h
+        proto/queue.grpc.pb.h
 )
 
 if(${BUILD_TESTS})

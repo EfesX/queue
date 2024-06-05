@@ -21,8 +21,11 @@ get_filename_component(hw_proto_path ${hw_proto} PATH)
 set(hw_proto_srcs "${CMAKE_CURRENT_BINARY_DIR}/queue.pb.cc")
 set(hw_proto_hdrs "${CMAKE_CURRENT_BINARY_DIR}/queue.pb.h")
 
+set(hw_grpc_srcs "${CMAKE_CURRENT_BINARY_DIR}/queue.grpc.pb.cc")
+set(hw_grpc_hdrs "${CMAKE_CURRENT_BINARY_DIR}/queue.grpc.pb.h")
+
 add_custom_command(
-    OUTPUT ${hw_proto_srcs} ${hw_proto_hdrs}
+    OUTPUT ${hw_proto_srcs} ${hw_proto_hdrs} ${hw_grpc_srcs} ${hw_grpc_hdrs}
     COMMAND ${PROTOC_EXE}
     ARGS --cpp_out ${CMAKE_CURRENT_BINARY_DIR}
         --grpc_out ${CMAKE_CURRENT_BINARY_DIR}
@@ -32,6 +35,6 @@ add_custom_command(
     DEPENDS ${hw_proto}
 )
 
-add_library(${HW_PROTO} ${hw_proto_srcs} ${hw_proto_hdrs})
+add_library(${HW_PROTO} ${hw_proto_srcs} ${hw_proto_hdrs} ${hw_grpc_srcs} ${hw_grpc_hdrs})
 target_link_libraries(${HW_PROTO} PUBLIC ${Protobuf_LIBRARY} gRPC::grpc gRPC::grpc++)
 target_include_directories(${HW_PROTO} INTERFACE ${CMAKE_CURRENT_BINARY_DIR})

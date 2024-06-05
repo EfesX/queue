@@ -7,9 +7,6 @@
 #include "queue.hpp"
 
 
-
-using namespace std::chrono_literals;
-
 namespace efesx::ts_queue {
 
 using storage_t    = queue::detail::proto_storage;

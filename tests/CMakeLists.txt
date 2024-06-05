@@ -15,9 +15,13 @@ target_link_libraries(queue_test ${PROJECT_NAME} ${GTEST_LINK} hw_proto)
 add_executable(ts_queue_test ts_queue_test.cc)
 target_link_libraries(ts_queue_test ${PROJECT_NAME} ${GTEST_LINK} hw_proto)
 
+add_executable(queue_web_test queue_web_test.cc)
+target_link_libraries(queue_web_test ${PROJECT_NAME} ${GTEST_LINK} hw_proto)
+
 enable_testing()
 add_test(meta_test meta_test)
 add_test(proto_storage_test proto_storage_test)
 add_test(queue_test queue_test)
 add_test(ts_queue_test ts_queue_test)
+add_test(queue_web_test queue_web_test)
 

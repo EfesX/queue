@@ -105,6 +105,12 @@ public:
             store.pop_back();
     }
 
+    void insert(QueueStorageNode& node){
+        store.emplace_front();
+        store.front().node = std::make_shared<QueueStorageNode>(node);
+        if(node.priority() != 0) store.sort();
+    }
+
     void insert(uint32_t priority, const void* raw, std::size_t size){
         //using google::protobuf::util::TimeUtil;
 
