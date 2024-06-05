@@ -110,12 +110,16 @@ TEST_P(Fixture, MPMC){
 
     std::list<std::pair<int, uint32_t>> values;
 
+    std::mutex mtx;
+
     for (auto i = 0; i < NUM_PRODUCERS; i++){
         producers.emplace_back([&](){
             for(auto i = 0; i < NUM_DATA; i++){
                 uint32_t val = std::rand();
                 p_queue.enqueue(i, val);
+                mtx.lock();
                 values.push_back(std::make_pair(i, val));
+                mtx.unlock();
                 std::this_thread::yield();
             }
         });
