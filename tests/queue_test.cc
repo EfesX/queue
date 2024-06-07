@@ -3,8 +3,8 @@
 #include <string>
 #include <iostream>
 
-#include "queue.hpp"
-#include "utils.hpp"
+#include "equeue/queue.hpp"
+#include "equeue/utils.hpp"
 
 using namespace efesx::queue;
 

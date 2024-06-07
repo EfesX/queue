@@ -1,36 +1,77 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.14)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE FILEPATH "vcpkg toolchain")
 
-option(BUILD_TESTS "Build the unit tests" ON)
+include(cmake/prelude.cmake)
 
-project(equeue LANGUAGES C CXX)
-
-file(GLOB_RECURSE ALL_SOURCE_FILES ${CMAKE_SOURCE_DIR}/include/*.hpp)
-
-add_custom_target(
-    lint
-    COMMAND clang-tidy
-    ${ALL_SOURCE_FILES}
-    --config-file=${CMAKE_SOURCE_DIR}/.clang-tidy
+project(
+    equeue
+    VERSION 0.1.0
+    DESCRIPTION "A universal queue with thread-safe features that can operate over gRPC"
+    HOMEPAGE_URL "https://github.com/EfesX/queue"
+    LANGUAGES CXX
 )
 
-add_subdirectory(proto)
+include(cmake/variables.cmake)
+include(cmake/linting.cmake)
 
-add_library(${PROJECT_NAME} INTERFACE)
-target_sources(${PROJECT_NAME} INTERFACE
-    FILE_SET HEADERS
-    BASE_DIRS "${PROJECT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}"
-    FILES
-        detail/meta.hpp
-        detail/proto_storage.hpp
-        detail/types.hpp
-        detail/utils.hpp
-        queue.hpp
-        proto/queue.pb.h
-        proto/queue.grpc.pb.h
+# ---- Generate proto files
+include(proto/equeue-proto.cmake)
+
+# ---- Declare library ----
+# hw_*_srcs - list of generated files from equeue-proto.cmake
+add_library(equeue ${hw_proto_srcs} ${hw_grpc_srcs})
+add_library(equeue::equeue ALIAS equeue)
+
+# Зачем вот это???
+include(GenerateExportHeader)
+generate_export_header(
+    equeue
+    BASE_NAME equeue
+    EXPORT_FILE_NAME export/equeue/equeue_export.hpp
+    CUSTOM_CONTENT_FROM_VARIABLE pragma_suppress_c4251
 )
 
-if(${BUILD_TESTS})
+set_target_properties(
+    equeue PROPERTIES
+    CXX_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN YES
+    VERSION "${PROJECT_VERSION}"
+    SOVERSION "${PROJECT_VERSION_MAJOR}"
+    EXPORT_NAME equeue
+    OUTPUT_NAME equeue
+)
+
+target_include_directories(
+    equeue 
+    PUBLIC
+        "\$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
+        "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>"
+        "\$<BUILD_INTERFACE:${Protobuf_INCLUDE_DIRS}>"
+        "\$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+)
+
+target_include_directories(
+    equeue SYSTEM PUBLIC
+        "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/export>"
+)
+
+target_compile_features(equeue PUBLIC cxx_std_20)
+
+# queue_proto_libraries - list of libraries from equeue-proto.cmake
+target_link_libraries(equeue PRIVATE ${queue_proto_libraries})
+
+# ---- Install rules ----
+if(NOT CMAKE_SKIP_INSTALL_RULES)
+  include(cmake/install-rules.cmake)
+endif()
+
+# ---- Tests ----
+if(BUILD_TESTING)
     add_subdirectory(tests)
+endif()
+
+# ---- Examples ----
+if(BUILD_EXAMPLES)
+    add_subdirectory(examples)
 endif()

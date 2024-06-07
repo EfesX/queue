@@ -27,7 +27,7 @@ jobs:
             git clone https://github.com/microsoft/vcpkg
 
         - name: configuring
-          run: cmake -DCMAKE_TOOLCHAIN_FILE=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake -S . -B build
+          run: cmake -DCMAKE_TOOLCHAIN_FILE=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake -S . -B build -DBUILD_TESTING=ON
 
         - name: building
           run: cmake --build build -j $(nproc)

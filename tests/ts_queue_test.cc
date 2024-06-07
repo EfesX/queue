@@ -6,8 +6,8 @@
 #include <vector>
 #include <cstdlib>
 
-#include "ts_queue.hpp"
-#include "utils.hpp"
+#include "equeue/ts_queue.hpp"
+#include "equeue/utils.hpp"
 
 #include <thread>
 

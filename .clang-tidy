@@ -6,3 +6,5 @@ WarningsAsErrors: '-*'
 HeaderFilterRegex: '.*hpp$'
 
 UseColor: true
+
+SystemHeaders: false

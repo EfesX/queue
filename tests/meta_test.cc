@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "detail/meta.hpp"
+#include "equeue/detail/meta.hpp"
 
 using namespace efesx::queue::detail;
 

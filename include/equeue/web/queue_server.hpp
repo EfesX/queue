@@ -11,9 +11,9 @@
 
 #include <absl/strings/str_format.h>
 
-#include "ts_queue.hpp"
-#include "proto/queue.pb.h"
-#include "proto/queue.grpc.pb.h"
+#include "equeue/ts_queue.hpp"
+#include "proto/queue.pb.h" // NOLINT
+#include "proto/queue.grpc.pb.h" // NOLINT
 
 
 namespace efesx::queue::web {

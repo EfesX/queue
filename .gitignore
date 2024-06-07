@@ -8,3 +8,8 @@ Testing
 
 /vcpkg_installed
 /vcpkg
+
+*BACKUP.txt
+
+/temp*
+/install

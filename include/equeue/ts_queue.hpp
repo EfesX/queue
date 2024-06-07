@@ -3,8 +3,8 @@
 #include <shared_mutex>
 #include <any>
 
-#include "detail/proto_storage.hpp"
-#include "queue.hpp"
+#include "equeue/detail/proto_storage.hpp"
+#include "equeue/queue.hpp"
 
 
 namespace efesx::ts_queue {

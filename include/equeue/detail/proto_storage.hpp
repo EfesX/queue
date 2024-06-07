@@ -1,13 +1,13 @@
 #pragma once
 
-#include "proto/queue.pb.h"
+#include "proto/queue.pb.h" // NOLINT
 //#include <google/protobuf/util/time_util.h>
 
 #include <list>
 #include <memory>
 #include <fstream>
 
-#include "meta.hpp"
+#include "equeue/detail/meta.hpp"
 
 namespace efesx::queue::detail {
 
