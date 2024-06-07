@@ -1,24 +1,10 @@
-Checks: '*,
-  -altera-*,
-  -misc-include-cleaner,
-  -bugprone-suspicious-include,
-  -llvmlibc-restrict-system-libc-headers,
-  -llvmlibc-implementation-in-namespace,
-  -modernize-use-trailing-return-type,
-  -cppcoreguidelines-pro-type-vararg,
-  -hicpp-vararg,
-  -llvmlibc-callee-namespace,
-  -hicpp-braces-around-statements,
-  -readability-braces-around-statements,
-  -fuchsia-default-arguments-calls,
-  -cppcoreguidelines-avoid-magic-numbers,
-  -readability-magic-numbers
-  -readability-function-cognitive-complexity,
-  -readability-magic-numbers,
-  -llvm-header-guard'
+Checks: 'cppcoreguidelines-*,
+  -cppcoreguidelines-pro-type-member-init'
 
 WarningsAsErrors: '-*'
 
 HeaderFilterRegex: '.*hpp$'
 
 UseColor: true
+
+SystemHeaders: false

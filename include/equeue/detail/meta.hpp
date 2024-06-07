@@ -3,8 +3,11 @@
 #include <type_traits>
 #include <concepts>
 #include <string>
+<<<<<<< HEAD:include/detail/meta.hpp
 
 #include "types.hpp"
+=======
+>>>>>>> cmake_refactoring:include/equeue/detail/meta.hpp
 
 namespace efesx {
 namespace queue {

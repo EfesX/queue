@@ -3,7 +3,7 @@
 #include <list>
 #include <type_traits>
 
-#include "detail/proto_storage.hpp"
+#include "equeue/detail/proto_storage.hpp"
 
 
 namespace efesx {

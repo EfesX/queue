@@ -1,58 +1,77 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.14)
 
-#set(VCPKG_ROOT "vcpkg" CACHE PATH "vcpkg root dir")
-#set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE FILEPATH "toolchain")
+set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE FILEPATH "vcpkg toolchain")
 
-set(CMAKE_CXX_STANDARD 20)
+include(cmake/prelude.cmake)
 
-option(BUILD_TESTS "Build the unit tests" ON)
-
-project(equeue LANGUAGES C CXX)
-
-file(GLOB_RECURSE ALL_SOURCE_FILES ${CMAKE_SOURCE_DIR}/*.hpp)
-
-add_custom_target(
-    lint
-    COMMAND clang-tidy
-    ${ALL_SOURCE_FILES}
-    --config-file=${CMAKE_SOURCE_DIR}/.clang-tidy
+project(
+    equeue
+    VERSION 0.1.0
+    DESCRIPTION "A universal queue with thread-safe features that can operate over gRPC"
+    HOMEPAGE_URL "https://github.com/EfesX/queue"
+    LANGUAGES CXX
 )
 
-#if(UNIX)
-#    if(NOT EXISTS ${VCPKG_ROOT}/vcpkg) 
-#        execute_process(COMMAND ./bootstrap-vcpkg.sh -disableMetrics WORKING_DIRECTORY ${VCPKG_ROOT})
-#    endif()
-#    set(VCPKG_EXEC ${VCPKG_ROOT}/vcpkg CACHE FILEPATH "vcpkg executable")
-#elseif(WIN32)
-#    if(NOT EXISTS ${VCPKG_ROOT}/vcpkg) 
-#        execute_process(COMMAND ./bootstrap-vcpkg.bat -disableMetrics WORKING_DIRECTORY ${VCPKG_ROOT})
-#    endif()
-#    set(VCPKG_EXEC ${VCPKG_ROOT}/vcpkg.exe CACHE FILEPATH "vcpkg executable")
-#else()
-#    message(FATAL_ERROR "Not Recognized OS Error")
-#endif()
-#
-#function(LibraryInstall LIB)
-#    execute_process(COMMAND ${VCPKG_EXEC} install ${LIB})
-#endfunction()
+include(cmake/variables.cmake)
+include(cmake/linting.cmake)
 
-#############################################################
-add_subdirectory(proto)
+# ---- Generate proto files
+include(proto/equeue-proto.cmake)
 
-add_library(${PROJECT_NAME} INTERFACE)
-target_sources(${PROJECT_NAME} INTERFACE
-    FILE_SET HEADERS
-    BASE_DIRS "${PROJECT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}"
-    FILES
-        detail/meta.hpp
-        detail/proto_storage.hpp
-        detail/types.hpp
-        detail/utils.hpp
-        queue.hpp
-        proto/queue.pb.h
-        proto/queue.grpc.pb.h
+# ---- Declare library ----
+# hw_*_srcs - list of generated files from equeue-proto.cmake
+add_library(equeue ${hw_proto_srcs} ${hw_grpc_srcs})
+add_library(equeue::equeue ALIAS equeue)
+
+# Зачем вот это???
+include(GenerateExportHeader)
+generate_export_header(
+    equeue
+    BASE_NAME equeue
+    EXPORT_FILE_NAME export/equeue/equeue_export.hpp
+    CUSTOM_CONTENT_FROM_VARIABLE pragma_suppress_c4251
 )
 
-if(${BUILD_TESTS})
+set_target_properties(
+    equeue PROPERTIES
+    CXX_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN YES
+    VERSION "${PROJECT_VERSION}"
+    SOVERSION "${PROJECT_VERSION_MAJOR}"
+    EXPORT_NAME equeue
+    OUTPUT_NAME equeue
+)
+
+target_include_directories(
+    equeue 
+    PUBLIC
+        "\$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
+        "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>"
+        "\$<BUILD_INTERFACE:${Protobuf_INCLUDE_DIRS}>"
+        "\$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+)
+
+target_include_directories(
+    equeue SYSTEM PUBLIC
+        "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/export>"
+)
+
+target_compile_features(equeue PUBLIC cxx_std_20)
+
+# queue_proto_libraries - list of libraries from equeue-proto.cmake
+target_link_libraries(equeue PRIVATE ${queue_proto_libraries})
+
+# ---- Install rules ----
+if(NOT CMAKE_SKIP_INSTALL_RULES)
+  include(cmake/install-rules.cmake)
+endif()
+
+# ---- Tests ----
+if(BUILD_TESTING)
     add_subdirectory(tests)
+endif()
+
+# ---- Examples ----
+if(BUILD_EXAMPLES)
+    add_subdirectory(examples)
 endif()

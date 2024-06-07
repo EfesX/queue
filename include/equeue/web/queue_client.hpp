@@ -4,8 +4,8 @@
 
 #include <grpcpp/grpcpp.h>
 
-#include "proto/queue.pb.h"
-#include "proto/queue.grpc.pb.h"
+#include "proto/queue.pb.h" // NOLINT
+#include "proto/queue.grpc.pb.h" // NOLINT
 
 #include <absl/strings/str_format.h>
 

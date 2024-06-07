@@ -1,0 +1,7 @@
+*:*queue.pb.h
+*:*queue.grpc.pb.h
+*:*queue.pb.cc
+*:*queue.grpc.pb.cc
+
+missingIncludeSystem:*
+missingInclude:*

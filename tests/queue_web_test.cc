@@ -1,8 +1,14 @@
 #include "gtest/gtest.h"
 
+<<<<<<< HEAD
 #include "web/queue_server.hpp"
 #include "web/queue_client.hpp"
 #include "ts_queue.hpp"
+=======
+#include "equeue/web/queue_server.hpp"
+#include "equeue/web/queue_client.hpp"
+#include "equeue/ts_queue.hpp"
+>>>>>>> cmake_refactoring
 
 using namespace efesx::queue::web;
 using namespace efesx::ts_queue;

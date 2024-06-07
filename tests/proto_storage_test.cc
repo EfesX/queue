@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "detail/proto_storage.hpp"
+#include "equeue/detail/proto_storage.hpp"
 
 using namespace efesx::queue::detail;
 
