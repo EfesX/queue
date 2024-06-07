@@ -30,7 +30,14 @@ jobs:
           run: cmake -DCMAKE_TOOLCHAIN_FILE=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake -S . -B build -DBUILD_TESTING=ON
 
         - name: building
-          run: cmake --build build -j $(nproc)
+          run: |
+            cmake --build build -j $(nproc)
+            cmake --install build
 
         - name: testing
-          run: ctest -VV --test-dir build/tests
+          run: |
+            ctest -VV --test-dir build/tests
+#            cd tests/install_test
+#            cmake -S . -B build && cmake --build build && ./build/install_test
+#            cd ../fetch_test
+#            cmake -S . -B build && cmake --build build && ./build/fetch_test
