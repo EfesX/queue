@@ -18,7 +18,7 @@ jobs:
         - uses: actions/cache@v3
           with:
             path: build/vcpkg_installed
-            key: ${{ runner.os }}-vcpkg-${{ hashFiles('./vcpkg.json') }}
+            key: ${{ runner.os }}-vcpkg-${{ hashFiles('./build/vcpkg_installed/vcpkg/info/*.list') }}
             restore-keys: ${{ runner.os }}-vcpkg-
 
         - name: installing
