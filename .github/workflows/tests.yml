@@ -32,7 +32,7 @@ jobs:
         - name: building
           run: |
             cmake --build build -j $(nproc)
-            cmake --install build
+            sudo cmake --install build
 
         - name: testing
           run: |
